@@ -12,9 +12,6 @@ const $logo = document.getElementById('realtorLogo');
 const $link = document.getElementById('realtorLink');
 const $themeLink = document.getElementById('themeStylesheet');
 
-const $viewToggle = document.getElementById('viewToggle');
-const $map = document.getElementById('map');
-
 const params = new URLSearchParams(location.search);
 const realtorKey = (params.get('realtor')||'').trim().toLowerCase();
 
@@ -165,8 +162,6 @@ async function renderMap(items){
     m.addListener('click', ()=> {
       infow.open({anchor: m, map});
       // Terug naar lijst en card openen
-      $viewToggle.setAttribute('aria-pressed','false');
-      $viewToggle.textContent = 'Kaartweergave';
       $map.classList.add('hidden');
       $grid.classList.remove('hidden');
       renderCards(FILTERED);
@@ -204,19 +199,6 @@ function applyFilters(){
     return okP && okT && okS;
   });
 
-  const mapMode = $viewToggle.getAttribute('aria-pressed') === 'true';
-  if (mapMode) {
-    $grid.classList.add('hidden');
-    $map.classList.remove('hidden');
-    renderMap(FILTERED).catch(()=>{});
-    $stats.textContent = `${FILTERED.length} resultaten`;
-  } else {
-    $map.classList.add('hidden');
-    $grid.classList.remove('hidden');
-    renderCards(FILTERED);
-  }
-}
-
 // -------------- data bootstrap --------------
 async function j(url){ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }
 
@@ -252,18 +234,7 @@ async function j(url){ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) th
   $type.addEventListener('change', applyFilters);
   $status.addEventListener('change', applyFilters);
 
-  // view toggle
-  $viewToggle.addEventListener('click', ()=>{
-    const pressed = $viewToggle.getAttribute('aria-pressed') === 'true';
-    const next = !pressed;
-    $viewToggle.setAttribute('aria-pressed', String(next));
-    $viewToggle.textContent = next ? 'Lijstweergave' : 'Kaartweergave';
-    applyFilters();
-  });
-
   // initial
-  $viewToggle.setAttribute('aria-pressed','false');
-  renderCards(RAW);
   $stats.textContent = `${RAW.length} resultaten`;
   clearError();
 })().catch(e=> showError(e.message||String(e)));
