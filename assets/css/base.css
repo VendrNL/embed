@@ -105,7 +105,7 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 3 / 4; /* 3 breed, 4 hoog */
+  aspect-ratio: 7 / 9; /* 7 breed, 9 hoog */
 }
 
 .media {
