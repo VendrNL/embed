@@ -4,16 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vendr Embed</title>
-
-  <!-- Inter font -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="assets/css/base.css">
-  <link id="themeStylesheet" rel="stylesheet" href="assets/css/themes/default.css">
 </head>
 <body>
-  <!-- STICKY header met logo, filters en view-toggle -->
   <header class="header header--neutral">
     <div class="container header-bar">
       <a id="realtorLink" href="#" target="_blank" rel="noopener" class="brand">
@@ -36,9 +31,6 @@
           </select>
         </label>
       </div>
-      <button id="viewToggle" class="view-toggle" type="button" aria-pressed="false" title="Wissel naar kaartweergave">
-        Kaartweergave
-      </button>
     </div>
   </header>
 
@@ -46,8 +38,6 @@
     <div id="alert" class="alert hidden"></div>
     <div id="stats" class="stats"></div>
     <div id="grid" class="grid"></div>
-    <!-- Kaartcontainer voor map view -->
-    <div id="map" class="map hidden" data-map-id="722bdf19803b1dbb"></div>
   </main>
 
   <template id="card-tpl">
@@ -64,15 +54,12 @@
       <div class="actions">
         <a class="btn" target="_blank" rel="noopener">
           Bekijk op Vendr
-          <svg class="ext" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z" fill="currentColor"/>
-          </svg>
+          <svg class="ext" width="14" height="14" viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z" fill="currentColor"/></svg>
         </a>
       </div>
     </article>
   </template>
 
-  <!-- ES module versie van app -->
   <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>
