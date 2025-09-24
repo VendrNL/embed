@@ -1,0 +1,11 @@
+{
+  "generated_at": "2025-09-24T10:07:20Z",
+  "default_feed": "data/feed.json",
+  "realtor_files": [
+    "data/realtor-389d4412-0814-4f11-b01c-d5a4b0355e50.json",
+    "data/realtor-db92a0e3-1ee8-4c9e-851c-3b54864ff0d0.json",
+    "data/realtor-146f9e18-0f8d-4301-a43e-9ca578c43692.json",
+    "data/realtor-bc163571-2dd9-405f-9bc0-19047f382f62.json",
+    "data/realtor-514efdd1-e8b7-4ca7-975b-22cc4b187f81.json"
+  ]
+}

@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap');
+
+.themed{
+  --bg:#f6f8fb; --panel:#ffffff; --panel-2:#ffffff;
+  --text:#0f172a; --muted:#475569; --border:#e2e8f0;
+  --accent:#1e40af; --ok:#16a34a; --warn:#d97706; --sold:#0f172a;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 8px 24px rgba(0,0,0,.22);
+}
+.themed{ font-family:'Raleway', var(--font-sans); }
+body{ color-scheme:light }

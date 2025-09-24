@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+.themed{
+  --bg:#f7fafc; --panel:#ffffff; --panel-2:#ffffff;
+  --text:#0b1220; --muted:#495873; --border:#e2e8f0;
+  --accent:#0f3d8a; --ok:#16a34a; --warn:#eab308; --sold:#0f172a;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 8px 24px rgba(0,0,0,.22);
+}
+.themed{ font-family:'Nunito Sans', var(--font-sans); }
+body{ color-scheme:light }

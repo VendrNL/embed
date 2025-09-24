@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Listingpagina</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link id="themeStylesheet" rel="stylesheet" href="assets/css/themes/theme-1.css">
+</head>
+<body>
+  <header class="header--neutral">
+    <h1>Listingpagina</h1>
+    <select id="theme"></select>
+  </header>
+  <main class="themed">
+    <div id="alert"></div>
+    <div id="stats"></div>
+    <div id="grid"></div>
+  </main>
+  <template id="card-tpl">
+    <article class="card">
+      <div class="media"><img class="img"><span class="badge"></span></div>
+      <div class="body"><h3 class="name"></h3><p class="addr"></p></div>
+      <div class="actions"><a class="btn">Bekijk</a></div>
+    </article>
+  </template>
+  <script src="assets/js/themes.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
