@@ -1,4 +1,4 @@
-// assets/js/app.js (ES module)
+// assets/js/app.js (ES module) — kaarttoggle + statusfilter
 
 const $grid = document.getElementById('grid');
 const $stats = document.getElementById('stats');
@@ -164,10 +164,9 @@ async function renderMap(items){
     const infow = new google.maps.InfoWindow({ content: html });
     m.addListener('click', ()=> {
       infow.open({anchor: m, map});
-      // wissel terug naar lijst en open card
+      // Terug naar lijst en card openen
       $viewToggle.setAttribute('aria-pressed','false');
       $viewToggle.textContent = 'Kaartweergave';
-      // render lijst opnieuw en highlight
       $map.classList.add('hidden');
       $grid.classList.remove('hidden');
       renderCards(FILTERED);
