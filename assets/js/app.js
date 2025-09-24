@@ -26,6 +26,7 @@ const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns=
 
 let RAW=[], FILTERED=[];
 let map, markers = [];
+let idToElement = new Map();
 
 // -------------- helpers --------------
 function showError(msg){ $alert.textContent = msg; $alert.classList.remove('hidden'); }
@@ -76,9 +77,14 @@ function coordsOf(it){
 // -------------- render: cards --------------
 function renderCards(items){
   $grid.innerHTML='';
+  idToElement.clear();
   const tpl = document.getElementById('card-tpl');
-  items.forEach(it=>{
+  items.forEach((it, idx)=>{
+    const domId = it.id || it.uuid || ('card-' + idx);
     const node = tpl.content.cloneNode(true);
+    const article = node.querySelector('article.card');
+    article.id = domId;
+
     const img = node.querySelector('.img');
     img.src = it.image || PLACEHOLDER; img.alt = it.name || '';
     img.onerror = ()=>{ img.src = PLACEHOLDER; };
@@ -95,8 +101,17 @@ function renderCards(items){
     a.href = it.url || '#';
 
     $grid.appendChild(node);
+    idToElement.set(domId, document.getElementById(domId));
   });
   $stats.textContent = `${items.length} resultaten`;
+}
+
+function highlightAndScrollTo(domId){
+  const el = idToElement.get(domId) || document.getElementById(domId);
+  if (!el) return;
+  el.classList.add('highlight');
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(()=> el.classList.remove('highlight'), 2000);
 }
 
 // -------------- render: map --------------
@@ -113,7 +128,7 @@ function ensureMap(){
 
     const s = document.createElement('script');
     s.setAttribute('data-gm-loaded','1');
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GMAPS_KEY)}&v=weekly&libraries=maps`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GMAPS_KEY)}&v=weekly`;
     s.async = true; s.defer = true;
     s.onerror = ()=>reject(new Error('Kon Google Maps niet laden'));
     s.onload = init;
@@ -134,10 +149,11 @@ async function renderMap(items){
   const bounds = new google.maps.LatLngBounds();
   let haveAny = false;
 
-  items.forEach(it=>{
+  items.forEach((it, idx)=>{
     const c = coordsOf(it);
     if (!c) return;
     haveAny = true;
+    const domId = it.id || it.uuid || ('card-' + idx);
     const m = new google.maps.Marker({ position: c, map, title: it.name || '' });
     const html = `
       <div style="font-family:Inter,system-ui,Arial">
@@ -146,7 +162,17 @@ async function renderMap(items){
         <a href="${it.url||'#'}" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:none">Bekijk op Vendr ↗</a>
       </div>`;
     const infow = new google.maps.InfoWindow({ content: html });
-    m.addListener('click', ()=> infow.open({anchor: m, map}));
+    m.addListener('click', ()=> {
+      infow.open({anchor: m, map});
+      // wissel terug naar lijst en open card
+      $viewToggle.setAttribute('aria-pressed','false');
+      $viewToggle.textContent = 'Kaartweergave';
+      // render lijst opnieuw en highlight
+      $map.classList.add('hidden');
+      $grid.classList.remove('hidden');
+      renderCards(FILTERED);
+      setTimeout(()=> highlightAndScrollTo(domId), 50);
+    });
     markers.push(m);
     bounds.extend(c);
   });
@@ -163,8 +189,8 @@ async function renderMap(items){
 function populateFilterOptions(items){
   const provinces = Array.from(new Set(items.map(x=>x._province))).filter(Boolean).sort();
   const types = Array.from(new Set(items.map(x=>x._type))).filter(Boolean).sort();
-  $prov.innerHTML = '<option value=\"\">Alle</option>' + provinces.map(p=>`<option>${p}</option>`).join('');
-  $type.innerHTML = '<option value=\"\">Alle</option>' + types.map(t=>`<option>${t}</option>`).join('');
+  $prov.innerHTML = '<option value="">Alle</option>' + provinces.map(p=>`<option>${p}</option>`).join('');
+  $type.innerHTML = '<option value="">Alle</option>' + types.map(t=>`<option>${t}</option>`).join('');
 }
 function applyFilters(){
   const p = $prov.value || '';
