@@ -1,77 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vendr Embed</title>
 
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Roboto, Roboto Slab + populairste families -->
+  <link href="https://fonts.googleapis.com/css2?
+    family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@400;700
+    &family=Open+Sans:wght@400;600;700
+    &family=Lato:wght@400;700
+    &family=Montserrat:wght@400;700
+    &family=Oswald:wght@400;500;700
+    &family=Raleway:wght@400;600;700
+    &family=Poppins:wght@400;500;700
+    &family=Merriweather:wght@400;700
+    &family=Nunito:wght@400;600;700
+    &family=Ubuntu:wght@400;500;700
+    &family=Playfair+Display:wght@400;700
+    &family=Source+Sans+Pro:wght@400;600;700
+    &family=Inter:wght@400;600;700
+    &family=Work+Sans:wght@400;600;700
+    &family=Quicksand:wght@400;600;700
+    &family=Inconsolata:wght@400;700
+    &family=DM+Sans:wght@400;500;700
+    &family=Fira+Sans:wght@400;500;700
+    &family=Overpass:wght@400;600;700
+    &family=Cabin:wght@400;600;700
+    &display=swap" rel="stylesheet">
 
-  <!-- Basis stylesheet -->
+  <!-- Basis CSS -->
   <link rel="stylesheet" href="assets/css/base.css">
-  <!-- Thema stylesheet (per makelaar overschreven) -->
-  <link id="themeStylesheet" rel="stylesheet" href="assets/css/themes/default.css">
-</head>
-<body>
-  <!-- Sticky header -->
-  <header class="header header--neutral">
-    <div class="container header-bar">
-      <a id="realtorLink" href="#" target="_blank" rel="noopener" class="brand">
-        <img id="realtorLogo" alt="Realtor logo">
-      </a>
-      <div class="filters">
-        <label>Provincie
-          <select id="filterProvincie"><option value="">Alle</option></select>
-        </label>
-        <label>Type vastgoed
-          <select id="filterType"><option value="">Alle</option></select>
-        </label>
-        <label>Status
-          <select id="filterStatus">
-            <option value="">Alle</option>
-            <option value="available">Beschikbaar</option>
-            <option value="under_bid">Onder bod</option>
-            <option value="sold_stc">Verkocht onder voorbehoud</option>
-            <option value="sold">Verkocht</option>
-          </select>
-        </label>
-      </div>
-    </div>
-  </header>
+  <!-- Thema CSS -->
+  <link rel="stylesheet" href="assets/css/themes/custom-mvgm.css" id="themeStylesheet">
 
-  <!-- Main content -->
-  <main class="container themed">
-    <div id="alert" class="alert hidden"></div>
-    <div id="stats" class="stats"></div>
-    <div id="grid" class="grid"></div>
-  </main>
-
-  <!-- Template voor cards -->
-  <template id="card-tpl">
-    <article class="card">
-      <div class="media">
-        <img class="img" alt="">
-        <span class="badge"></span>
-      </div>
-      <div class="body">
-        <h3 class="name"></h3>
-        <p class="addr"></p>
-        <p class="meta"></p>
-      </div>
-      <div class="actions">
-        <a class="btn" target="_blank" rel="noopener">
-          Bekijk op Vendr
-          <svg class="ext" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z" fill="currentColor"/>
-          </svg>
-        </a>
-      </div>
-    </article>
-  </template>
-
-  <!-- JavaScript -->
-  <script type="module" src="assets/js/app.js"></script>
-</body>
-</html>
+  <style>
+    :root {
+      /* Font-variabelen */
+      --font-roboto: 'Roboto', sans-serif;
+      --font-roboto-slab: 'Roboto Slab', serif;
+      --font-open-sans: 'Open Sans', sans-serif;
+      --font-lato: 'Lato', sans-serif;
+      --font-montserrat: 'Montserrat', sans-serif;
+      --font-oswald: 'Oswald', sans-serif;
+      --font-raleway: 'Raleway', sans-serif;
+      --font-poppins: 'Poppins', sans-serif;
+      --font-merriweather: 'Merriweather', serif;
+      --font-nunito: 'Nunito', sans-serif;
+      --font-ubuntu: 'Ubuntu', sans-serif;
+      --font-playfair: 'Playfair Display', serif;
+      --font-source-sans: 'Source Sans Pro', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+      --font-work-sans: 'Work Sans', sans-serif;
+      --font-quicksand: 'Quicksand', sans-serif;
+      --font-inconsolata: 'Inconsolata', monospace;
