@@ -1,57 +1,103 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vendr Embed</title>
 
-  <!-- Google Fonts: Roboto, Roboto Slab + populairste families -->
-  <link href="https://fonts.googleapis.com/css2?
-    family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@400;700
-    &family=Open+Sans:wght@400;600;700
-    &family=Lato:wght@400;700
-    &family=Montserrat:wght@400;700
-    &family=Oswald:wght@400;500;700
-    &family=Raleway:wght@400;600;700
-    &family=Poppins:wght@400;500;700
-    &family=Merriweather:wght@400;700
-    &family=Nunito:wght@400;600;700
-    &family=Ubuntu:wght@400;500;700
-    &family=Playfair+Display:wght@400;700
-    &family=Source+Sans+Pro:wght@400;600;700
-    &family=Inter:wght@400;600;700
-    &family=Work+Sans:wght@400;600;700
-    &family=Quicksand:wght@400;600;700
-    &family=Inconsolata:wght@400;700
-    &family=DM+Sans:wght@400;500;700
-    &family=Fira+Sans:wght@400;500;700
-    &family=Overpass:wght@400;600;700
-    &family=Cabin:wght@400;600;700
-    &display=swap" rel="stylesheet">
+  <!-- Google Fonts (losse links, robuust) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Basis CSS -->
-  <link rel="stylesheet" href="assets/css/base.css">
-  <!-- Thema CSS -->
-  <link rel="stylesheet" href="assets/css/themes/custom-mvgm.css" id="themeStylesheet">
-  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/base.css" />
 
+  <!-- Thema CSS (wordt dynamisch vervangen door app.js indien nodig) -->
+  <link rel="stylesheet" href="assets/css/themes/custom-mvgm.css" id="themeStylesheet" />
+
+  <!-- (Optioneel) Font-utilities voor snelle wissel per makelaar -->
+  <link rel="stylesheet" href="assets/css/fonts.css" />
+
+  <!-- Basis font-variabelen; je kunt deze per makelaar in JS overschrijven -->
   <style>
     :root {
-      /* Font-variabelen */
-      --font-roboto: 'Roboto', sans-serif;
-      --font-roboto-slab: 'Roboto Slab', serif;
-      --font-open-sans: 'Open Sans', sans-serif;
-      --font-lato: 'Lato', sans-serif;
-      --font-montserrat: 'Montserrat', sans-serif;
-      --font-oswald: 'Oswald', sans-serif;
-      --font-raleway: 'Raleway', sans-serif;
-      --font-poppins: 'Poppins', sans-serif;
-      --font-merriweather: 'Merriweather', serif;
-      --font-nunito: 'Nunito', sans-serif;
-      --font-ubuntu: 'Ubuntu', sans-serif;
-      --font-playfair: 'Playfair Display', serif;
-      --font-source-sans: 'Source Sans Pro', sans-serif;
-      --font-inter: 'Inter', sans-serif;
-      --font-work-sans: 'Work Sans', sans-serif;
-      --font-quicksand: 'Quicksand', sans-serif;
-      --font-inconsolata: 'Inconsolata', monospace;
+      --font-body: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      --font-heading: 'Roboto Slab', serif;
+    }
+    body { font-family: var(--font-body); }
+    h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading); }
+  </style>
+</head>
+<body>
+  <!-- Sticky Header (neutrale stijl) -->
+  <header class="header--neutral">
+    <div class="container header-bar">
+      <a href="#" id="realtorLink" class="brand" aria-label="Naar website makelaar">
+        <img id="realtorLogo" src="" alt="Realtor logo" />
+      </a>
+
+      <!-- Filters -->
+      <div class="filters" aria-label="Resultaatfilters">
+        <label for="filterProvincie">Provincie
+          <select id="filterProvincie" name="provincie">
+            <option value="">Alle</option>
+          </select>
+        </label>
+
+        <label for="filterType">Type vastgoed
+          <select id="filterType" name="type">
+            <option value="">Alle</option>
+          </select>
+        </label>
+
+        <label for="filterStatus">Status
+          <select id="filterStatus" name="status">
+            <option value="">Alle</option>
+            <option value="available">Beschikbaar</option>
+            <option value="under_bid">Onder bod</option>
+            <option value="sold_stc">Verkocht o.v.</option>
+            <option value="sold">Verkocht</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content (themed) -->
+  <main class="container themed" id="main">
+    <!-- Foutmeldingen -->
+    <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
+
+    <!-- Statistieken / aantallen -->
+    <div id="stats" class="stats"></div>
+
+    <!-- Grid met kaarten -->
+    <div id="grid" class="grid" aria-live="polite"></div>
+  </main>
+
+  <!-- Kaarttemplate -->
+  <template id="card-tpl">
+    <article class="card">
+      <div class="media">
+        <img class="img" src="" alt="" loading="lazy" />
+        <span class="badge">Beschikbaar</span>
+      </div>
+      <div class="body">
+        <h3 class="name"></h3>
+        <p class="addr"></p>
+        <div class="meta"></div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          Bekijk op Vendr <span class="ext" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </article>
+  </template>
+
+  <!-- App logic -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
