@@ -1,6 +1,5 @@
-// assets/js/app.js (ES module) — lijstweergave met filters (geen kaart)
+// assets/js/app.js — robuuste loader met ?feed= noodklep en betere errors
 
-// ---- DOM refs ----
 const $grid  = document.getElementById('grid');
 const $stats = document.getElementById('stats');
 const $alert = document.getElementById('alert');
@@ -13,20 +12,21 @@ const $logo      = document.getElementById('realtorLogo');
 const $link      = document.getElementById('realtorLink');
 const $themeLink = document.getElementById('themeStylesheet');
 
-// ---- Querystring ----
 const params = new URLSearchParams(location.search);
 const realtorKey = (params.get('realtor') || '').trim().toLowerCase();
+const overrideFeed = params.get('feed')?.trim();
 
-// ---- State ----
 let RAW = [];
 let FILTERED = [];
 
-// ---- Helpers UI ----
 function showError(msg) {
+  if (!$alert) return;
   $alert.textContent = msg;
   $alert.classList.remove('hidden');
+  console.error('[Vendr Embed] ' + msg);
 }
 function clearError() {
+  if (!$alert) return;
   $alert.classList.add('hidden');
   $alert.textContent = '';
 }
@@ -38,26 +38,23 @@ const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '</svg>'
 );
 
-// ---- Status-normalisatie & badge ----
 function normalizeStatus(it) {
-  const av   = (it.availability || '').toString().toLowerCase().trim();
+  const av   = (it.availability || '').toLowerCase().trim();
   const sold = !!it.is_sold;
   const st   = (it.status || '').toLowerCase();
-  // Heuristieken voor veelvoorkomende varianten in brondata
   if (sold || av === 'sold' || /verkocht(?!.*voorbehoud)/.test(st)) return 'sold';
   if (av === 'sold_stc' || /verkocht.*voorbehoud/.test(st)) return 'sold_stc';
   if (av === 'under_bid' || /onder.*bod/.test(st)) return 'under_bid';
   return 'available';
 }
-function statusBadge(av, sold, soldStc) {
-  const s = normalizeStatus({ availability: av, is_sold: sold, sold_stc: soldStc });
-  if (s === 'sold')      return { text: 'Verkocht',              cls: 'sold' };
-  if (s === 'under_bid') return { text: 'Onder bod',             cls: 'warn' };
-  if (s === 'sold_stc')  return { text: 'Verkocht o.v.',         cls: 'warn' };
-  return { text: 'Beschikbaar', cls: '' };
+function statusBadgeText(it) {
+  const s = normalizeStatus(it);
+  if (s === 'sold')      return 'Verkocht';
+  if (s === 'under_bid') return 'Onder bod';
+  if (s === 'sold_stc')  return 'Verkocht o.v.';
+  return 'Beschikbaar';
 }
 
-// ---- Afleidingen voor filters ----
 const PROV = [
   'Groningen','Friesland','Drenthe','Overijssel','Flevoland',
   'Gelderland','Utrecht','Noord-Holland','Zuid-Holland','Zeeland',
@@ -82,54 +79,55 @@ function inferType(item) {
   return 'Overig';
 }
 
-// ---- Rendering cards ----
 function renderCards(items) {
+  if (!$grid) return;
   $grid.innerHTML = '';
   const tpl = document.getElementById('card-tpl');
+  if (!tpl) { showError('Template card-tpl ontbreekt in index.html'); return; }
 
   items.forEach(it => {
     const node = tpl.content.cloneNode(true);
 
-    // media
     const img = node.querySelector('.img');
-    img.src = it.image || PLACEHOLDER;
-    img.alt = it.name || '';
-    img.onerror = () => { img.src = PLACEHOLDER; };
+    if (img) {
+      img.src = it.image || PLACEHOLDER;
+      img.alt = it.name || '';
+      img.onerror = () => { img.src = PLACEHOLDER; };
+    }
 
-    // badge
-    const b = statusBadge(it.availability, it.is_sold, it.sold_stc);
     const badge = node.querySelector('.badge');
-    badge.textContent = b.text;
-    if (b.cls) badge.classList.add(b.cls);
+    if (badge) badge.textContent = statusBadgeText(it);
 
-    // body
-    node.querySelector('.name').textContent = it.name || '—';
-    node.querySelector('.addr').textContent = it.full_address || '';
-    node.querySelector('.meta').textContent = ''; // gereserveerd voor additionele info
+    const name = node.querySelector('.name');
+    if (name) name.textContent = it.name || '—';
 
-    // actions
+    const addr = node.querySelector('.addr');
+    if (addr) addr.textContent = it.full_address || '';
+
     const a = node.querySelector('.btn');
-    a.href = it.url || '#';
+    if (a)   a.href = it.url || '#';
 
     $grid.appendChild(node);
   });
 
-  $stats.textContent = `${items.length} resultaten`;
+  if ($stats) $stats.textContent = `${items.length} resultaten`;
 }
 
-// ---- Filters opbouwen & toepassen ----
 function populateFilterOptions(items) {
-  const provinces = Array.from(new Set(items.map(x => x._province))).filter(Boolean).sort();
-  const types     = Array.from(new Set(items.map(x => x._type))).filter(Boolean).sort();
-
-  $prov.innerHTML = '<option value="">Alle</option>' + provinces.map(p => `<option>${p}</option>`).join('');
-  $type.innerHTML = '<option value="">Alle</option>' + types.map(t => `<option>${t}</option>`).join('');
+  if ($prov) {
+    const provinces = Array.from(new Set(items.map(x => x._province))).filter(Boolean).sort();
+    $prov.innerHTML = '<option value="">Alle</option>' + provinces.map(p => `<option>${p}</option>`).join('');
+  }
+  if ($type) {
+    const types     = Array.from(new Set(items.map(x => x._type))).filter(Boolean).sort();
+    $type.innerHTML = '<option value="">Alle</option>' + types.map(t => `<option>${t}</option>`).join('');
+  }
 }
 
 function applyFilters() {
-  const p = $prov.value || '';
-  const t = $type.value || '';
-  const s = $status.value || '';
+  const p = $prov?.value || '';
+  const t = $type?.value || '';
+  const s = $status?.value || '';
 
   FILTERED = RAW.filter(x => {
     const okP = !p || x._province === p;
@@ -142,65 +140,78 @@ function applyFilters() {
   renderCards(FILTERED);
 }
 
-// ---- Data laden ----
-async function j(url) {
+async function getJSON(url, label='') {
   const r = await fetch(url, { cache: 'no-store' });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) throw new Error(`${label||'GET'} ${url} → HTTP ${r.status}`);
   return r.json();
 }
 
-(async function bootstrap() {
-  // 1) Mapping laden
-  const mapMeta = await j('data/realtors.json').catch(() => null);
-  if (!mapMeta || !mapMeta.realtors) {
-    showError('Ontbrekende data/realtors.json');
-    return;
-  }
-  const meta = mapMeta.realtors[realtorKey];
-  if (!meta) {
-    showError('Onbekende realtor in querystring. Gebruik ?realtor=<slug>.');
-    return;
-  }
-
-  // 2) Merk & thema
-  $themeLink.href = meta.stylesheet_local || 'assets/css/themes/default.css';
-  if (meta.logo) $logo.src = meta.logo;
-  $logo.alt = meta.name || 'Realtor';
-  $link.href = (meta.website && /^https?:\/\//i.test(meta.website))
-    ? meta.website
-    : ('https://' + (meta.website || ''));
-
-  // 3) Data
-  const local = `data/realtor-${meta.uuid}.json`;
-  let data = [];
-  try {
-    data = await j(local);
-  } catch (e) {
-    // Fallback naar externe feed (vereist CORS/JSON)
-    if (meta.feed) {
-      try { data = await j(meta.feed); }
-      catch (e2) {
-        showError('Kon feed niet laden (lokaal of extern).');
-        return;
-      }
-    } else {
-      showError('Geen lokale feed en geen externe feed gedefinieerd.');
-      return;
+async function loadDataFromMeta(meta) {
+  // 1) Probeer lokale file
+  if (meta?.uuid) {
+    const local = `data/realtor-${meta.uuid}.json`;
+    try {
+      console.log('[Vendr Embed] Fetch local:', local);
+      return await getJSON(local, 'local');
+    } catch (e) {
+      console.warn('[Vendr Embed] Local failed:', e.message);
     }
   }
+  // 2) Fallback naar externe feed
+  if (meta?.feed) {
+    try {
+      console.log('[Vendr Embed] Fetch external:', meta.feed);
+      return await getJSON(meta.feed, 'feed');
+    } catch (e) {
+      console.warn('[Vendr Embed] External failed:', e.message);
+    }
+  }
+  throw new Error('Geen bruikbare feed (lokaal of extern) gevonden.');
+}
 
-  RAW = data.map(x => ({
-    ...x,
-    _province: x.province || inferProvince(x),
-    _type: x.asset_type || x.type || inferType(x),
-  }));
+(async function bootstrap() {
+  try {
+    clearError();
 
-  // 4) Filters & render
-  populateFilterOptions(RAW);
-  $prov.addEventListener('change', applyFilters);
-  $type.addEventListener('change', applyFilters);
-  $status.addEventListener('change', applyFilters);
+    // Noodklep: ?feed=... (negeert mapping)
+    if (overrideFeed) {
+      console.log('[Vendr Embed] Using override feed:', overrideFeed);
+      const data = await getJSON(overrideFeed, 'override');
+      RAW = data.map(x => ({ ...x, _province: x.province || inferProvince(x), _type: x.asset_type || x.type || inferType(x) }));
+      populateFilterOptions(RAW);
+      $prov?.addEventListener('change', applyFilters);
+      $type?.addEventListener('change', applyFilters);
+      $status?.addEventListener('change', applyFilters);
+      renderCards(RAW);
+      return;
+    }
 
-  renderCards(RAW);
-  clearError();
-})().catch(e => showError(e.message || String(e)));
+    // Mapping ophalen
+    const mapMeta = await getJSON('data/realtors.json', 'map');
+    if (!mapMeta?.realtors) throw new Error('Ontbrekende sleutel "realtors" in data/realtors.json');
+
+    const meta = mapMeta.realtors[realtorKey];
+    if (!meta) throw new Error(`Onbekende realtor "${realtorKey}". Controleer data/realtors.json`);
+
+    // Merk & thema
+    if ($themeLink && meta.stylesheet_local) $themeLink.href = meta.stylesheet_local;
+    if ($logo && meta.logo) { $logo.src = meta.logo; $logo.alt = meta.name || 'Realtor'; }
+    if ($link && meta.website) {
+      $link.href = /^https?:\/\//i.test(meta.website) ? meta.website : ('https://' + meta.website);
+    }
+
+    // Data
+    const data = await loadDataFromMeta(meta);
+    RAW = data.map(x => ({ ...x, _province: x.province || inferProvince(x), _type: x.asset_type || x.type || inferType(x) }));
+
+    // Filters & render
+    populateFilterOptions(RAW);
+    $prov?.addEventListener('change', applyFilters);
+    $type?.addEventListener('change', applyFilters);
+    $status?.addEventListener('change', applyFilters);
+
+    renderCards(RAW);
+  } catch (e) {
+    showError(e.message || String(e));
+  }
+})();
