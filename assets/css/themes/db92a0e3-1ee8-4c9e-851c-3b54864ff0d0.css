@@ -1,12 +1,6 @@
 /************************************************************
  * CUSTOM THEME – MVGM look (Flatsome-achtige stijl)
  * Scope: main.container.themed …
- * ----------------------------------------------------------
- * Kernprincipes uit de referentie:
- * - Veel witruimte, zachte schaduwen, subtiele borders
- * - Primair kleurenpalet: donkerblauw #012D55, licht cyaan #B6D6DB
- * - Accenten met diepe paars/groene badgekleur #5D3D69
- * - Ronde knoppen/pillen, nette typografie
  ************************************************************/
 
 /* ==========================================================
@@ -14,45 +8,37 @@
    ========================================================== */
 main.container.themed {
   /* Palet */
-  --c-bg:           #f7fafc;    /* pagina-achtergrond */
-  --c-text:         #12212e;    /* basistekst (donker koel) */
-  --c-muted:        #5b6b7c;    /* secundaire tekst */
-  --c-border:       #e6edf2;    /* subtiele borderkleur */
-  --c-panel:        #ffffff;    /* cardpaneel */
-  --c-panel-2:      #f1f6f9;    /* lichte achtergrond voor media */
-  --c-primary:      #012D55;    /* MVGM donkerblauw (koppen/links/knoppen) */
-  --c-primary-2:    #0d3f72;    /* hover-variant */
-  --c-accent:       #012D55;    /* knoppenkleur (consistent met primary) */
-  --c-card:         #B6D6DB;    /* gevraagde card-achtergrond */
-  --c-badge:        #5D3D69;    /* gevraagde vierkante badgekleur */
+  --c-bg:           #f7fafc;
+  --c-text:         #12212e;
+  --c-muted:        #5b6b7c;
+  --c-border:       #e6edf2;
+  --c-panel:        #ffffff;
+  --c-panel-2:      #f1f6f9;
+  --c-primary:      #012D55;
+  --c-primary-2:    #0d3f72;
+  --c-accent:       #012D55;
+  --c-card:         #B6D6DB;
+  --c-badge:        #5D3D69;
   --c-badge-text:   #ffffff;
-
-  /* Statuskleuren (fallback voor datasetvarianten) */
-  --c-success:      #1a7f5a;   /* beschikbaar */
-  --c-warn:         #d28d0c;   /* onder bod / o.v. */
-  --c-danger:       #101418;   /* verkocht (donker) */
 
   /* Typografie */
   --font-body:      'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-  --font-heading:   'Roboto Slab', var(--font-body); /* gevraagde koppen */
-  --fz-base:        1em;        /* body */
-  --fz-sm:          0.95em;     /* kleine tekst */
-  --fz-xs:          0.85em;     /* extra klein */
-  --fz-h3:          1.17em;     /* cardtitels */
+  --font-heading:   'Roboto Slab', var(--font-body);
+  --fz-base:        1em;
+  --fz-sm:          0.95em;
+  --fz-xs:          0.85em;
+  --fz-h3:          1.17em;
   --fw-bold:        700;
 
   /* Layout */
-  --radius:         14px;     /* iets zachtere hoek dan default */
+  --radius:         14px;
   --radius-pill:    999px;
-  --shadow:         0 8px 24px rgba(1,45,85,0.08);    /* zachte blauwe schaduw */
+  --shadow:         0 8px 24px rgba(1,45,85,0.08);
   --shadow-soft:    0 1px 3px rgba(1,45,85,0.06);
-  --px:             16px;     /* horizontale padding container */
-
-  /* Spacers */
   --s-1: 6px; --s-2: 10px; --s-3: 12px; --s-4: 14px; --s-5: 16px; --s-6: 20px; --s-7: 24px;
 }
 
-/* Basis typografie en achtergrond */
+/* Basis */
 main.container.themed {
   background: var(--c-bg);
   color: var(--c-text);
@@ -76,13 +62,12 @@ main.container.themed .hidden { display:none; }
 main.container.themed .stats {
   color: var(--c-muted);
   margin: var(--s-4) 0;
-  padding-bottom: calc(var(--s-7) + 8px); /* extra ruimte t.o.v. grid */
+  padding-bottom: calc(var(--s-7) + 8px);
   font-size: var(--fz-sm);
 }
 
 /* ==========================================================
    2) GRID
-   - De gridkolommen zelf regel je in base.css; hier alleen spacing
    ========================================================== */
 main.container.themed .grid {
   display: grid;
@@ -91,10 +76,9 @@ main.container.themed .grid {
 
 /* ==========================================================
    3) CARD (container)
-   - Verhouding (3/4) wordt in base.css ingesteld; hier styling
    ========================================================== */
 main.container.themed .card {
-  background: var(--c-card);             /* gevraagd: #B6D6DB */
+  background: var(--c-card);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -107,8 +91,6 @@ main.container.themed .card:hover {
   box-shadow: var(--shadow);
   transform: translateY(-1px);
 }
-
-/* Highlight bij programmatic scroll */
 main.container.themed .card.highlight {
   outline: 3px solid rgba(1,45,85,0.22);
   box-shadow: 0 0 0 3px rgba(1,45,85,0.12) inset;
@@ -122,61 +104,59 @@ main.container.themed .card .media {
   background: var(--c-panel-2);
   padding-top: 58%;
 }
-
 main.container.themed .card .media .img {
   position: absolute;
   inset: 0;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-/* Badge linksboven op de foto (vierkant, wit tekst) */
+/* Badge (alle statussen dezelfde kleur, Roboto Slab) */
 main.container.themed .card .media .badge {
   position: absolute;
-  left: var(--s-5);
-  top: var(--s-5);
+  top: 0;
+  left: 0;
   padding: var(--s-2) var(--s-4);
-  border-radius: 0;                       /* vierkant */
-  background: var(--c-badge);             /* #5D3D69 */
-  color: var(--c-badge-text);             /* wit */
+  border-radius: 0;
+  background: #5D3D69 !important;
+  color: #fff !important;
+  font-family: 'Roboto Slab', var(--font-body);
   font-weight: var(--fw-bold);
   font-size: 12px;
   letter-spacing: .2px;
-  text-transform: none; /* Flatsome gebruikt vaak uppercase; hier bewust niet */
+  text-transform: none;
+}
+main.container.themed .card .media .badge.warn,
+main.container.themed .card .media .badge.sold {
+  background: #5D3D69 !important;
+  color: #fff !important;
+  border-radius: 0;
 }
 
-/* Semantische varianten (mochten je data andere statuslabels hebben) */
-main.container.themed .card .media .badge.warn   { background: var(--c-warn);   color:#2b1710; border-radius: 4px; }
-main.container.themed .card .media .badge.sold   { background: var(--c-danger); color:#fff;    border-radius: 4px; }
-
 /* ==========================================================
-   3.2) CARD — BODY (titel, adres, meta)
+   3.2) CARD — BODY
    ========================================================== */
 main.container.themed .card .body {
   padding: var(--s-5) var(--s-6);
   color: var(--c-text);
   font-size: var(--fz-sm);
-  background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.35));
-  /* zorgt voor lichte glaslook bovenop de cardkleur */
+  background: transparent;  /* geen gradient meer */
   flex: 1 1 auto;
 }
-
 main.container.themed .card .body .name {
   margin: 0 0 var(--s-2);
-  font-family: var(--font-heading);       /* Roboto Slab */
+  font-family: var(--font-heading);
   font-weight: var(--fw-bold);
   font-size: var(--fz-h3);
   line-height: 1.25;
-  color: var(--c-primary);                /* #012D55 */
-  word-break: break-word;
+  color: var(--c-primary);
 }
-
 main.container.themed .card .body .addr {
   margin: 0;
   color: var(--c-text);
   opacity: .9;
 }
-
 main.container.themed .card .body .meta {
   margin: var(--s-2) 0 0;
   color: var(--c-muted);
@@ -184,17 +164,16 @@ main.container.themed .card .body .meta {
 }
 
 /* ==========================================================
-   3.3) CARD — ACTIONS (knoppen)
+   3.3) CARD — ACTIONS
    ========================================================== */
 main.container.themed .card .actions {
   display: flex;
   gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
-  margin-top: auto;        /* actions onderaan */
-  border-top: none;        /* géén scheidingslijn */
-  background: transparent; /* laat de cardkleur optisch doorlopen */
+  margin-top: auto;
+  border-top: none;
+  background: transparent;
 }
-
 main.container.themed .card .actions .btn {
   display: inline-flex;
   align-items: center;
@@ -216,19 +195,8 @@ main.container.themed .card .actions .btn:hover {
 }
 main.container.themed .card .actions .btn .ext { display:block; }
 
-/* Alternatieve “secundair” knopstijl (optioneel) */
-main.container.themed .card .actions .btn--secondary {
-  background: #ffffff;
-  color: var(--c-primary);
-  border: 1px solid var(--c-border);
-  box-shadow: var(--shadow-soft);
-}
-main.container.themed .card .actions .btn--secondary:hover {
-  filter: none; transform: translateY(-1px);
-}
-
 /* ==========================================================
-   4) KAART (voor toekomst, nu niet actief – stijl alvast mee)
+   4) KAART
    ========================================================== */
 main.container.themed .map {
   height: 70vh;
@@ -240,7 +208,7 @@ main.container.themed .map {
 }
 
 /* ==========================================================
-   5) UTILITIES (handige hulpkla ssen)
+   5) UTILITIES
    ========================================================== */
 main.container.themed .u-muted { color: var(--c-muted); }
 main.container.themed .u-sm    { font-size: var(--fz-sm); }
@@ -250,7 +218,6 @@ main.container.themed .u-bold  { font-weight: var(--fw-bold); }
 main.container.themed .pill   { border-radius: var(--radius-pill); padding: var(--s-1) var(--s-3); }
 main.container.themed .shadow { box-shadow: var(--shadow-soft); }
 
-/* Randen en sectieblokken voor rijke layouts */
 main.container.themed .panel {
   background: var(--c-panel);
   border: 1px solid var(--c-border);
@@ -266,16 +233,4 @@ main.container.themed .panel {
   main.container.themed .stats { font-size: var(--fz-xs); }
   main.container.themed .card .body { font-size: var(--fz-xs); }
   main.container.themed .card .actions .btn { padding: var(--s-2) var(--s-4); }
-}
-
-/* ==========================================================
-   7) THEME HOOKS (indien je per makelaar klassen wilt togglen)
-   ------------------------------------------------------------
-   Voeg via JS een class toe aan <main> als je micro-varianten
-   per makelaar wilt hanteren, zonder een nieuw CSS-bestand.
-   Voorbeeld: themed--mvgm-alt
-   ========================================================== */
-main.container.themed.themed--mvgm-alt {
-  --c-card:   #c7e0e4;
-  --c-primary:#0d3f72;
 }
