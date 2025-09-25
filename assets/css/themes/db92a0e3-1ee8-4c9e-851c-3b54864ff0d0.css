@@ -18,8 +18,6 @@ main.container.themed {
   --c-primary-2:    #0d3f72;
   --c-accent:       #012D55;
   --c-card:         #B6D6DB;
-  --c-badge:        #5D3D69;
-  --c-badge-text:   #ffffff;
 
   /* Typografie */
   --font-body:      'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
@@ -112,26 +110,26 @@ main.container.themed .card .media .img {
   object-fit: cover;
 }
 
-/* Badge (alle statussen dezelfde kleur, Roboto Slab) */
-main.container.themed .card .media .badge {
+/* Badge altijd met vaste styling */
+main.container.themed .card .media span.badge {
   position: absolute;
-  top: 0;
   left: 0;
-  padding: var(--s-2) var(--s-4);
-  border-radius: 0;
-  background: #5D3D69 !important;
-  color: #fff !important;
-  font-family: 'Roboto Slab', var(--font-body);
-  font-weight: var(--fw-bold);
-  font-size: 12px;
-  letter-spacing: .2px;
-  text-transform: none;
-}
-main.container.themed .card .media .badge.warn,
-main.container.themed .card .media .badge.sold {
-  background: #5D3D69 !important;
-  color: #fff !important;
-  border-radius: 0;
+  top: 0;
+  background-color: #5D3D69;
+  padding: 12px 32px;
+  color: #FFF !important;
+  font-family: 'Roboto Slab', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 2rem;
+  margin: 0 0 16px 0;
+  border-radius: 20px 0 0 0;
+  display: inline-block;
+  box-shadow:
+    rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
+    rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  z-index: 2;
 }
 
 /* ==========================================================
@@ -141,7 +139,7 @@ main.container.themed .card .body {
   padding: var(--s-5) var(--s-6);
   color: var(--c-text);
   font-size: var(--fz-sm);
-  background: transparent;  /* geen gradient meer */
+  background: transparent;  /* geen gradient */
   flex: 1 1 auto;
 }
 main.container.themed .card .body .name {
@@ -195,42 +193,4 @@ main.container.themed .card .actions .btn:hover {
 }
 main.container.themed .card .actions .btn .ext { display:block; }
 
-/* ==========================================================
-   4) KAART
-   ========================================================== */
-main.container.themed .map {
-  height: 70vh;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--c-panel-2);
-  box-shadow: var(--shadow-soft);
-}
-
-/* ==========================================================
-   5) UTILITIES
-   ========================================================== */
-main.container.themed .u-muted { color: var(--c-muted); }
-main.container.themed .u-sm    { font-size: var(--fz-sm); }
-main.container.themed .u-xs    { font-size: var(--fz-xs); }
-main.container.themed .u-bold  { font-weight: var(--fw-bold); }
-
-main.container.themed .pill   { border-radius: var(--radius-pill); padding: var(--s-1) var(--s-3); }
-main.container.themed .shadow { box-shadow: var(--shadow-soft); }
-
-main.container.themed .panel {
-  background: var(--c-panel);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  padding: var(--s-6);
-}
-
-/* ==========================================================
-   6) RESPONSIVE
-   ========================================================== */
-@media (max-width: 992px) {
-  main.container.themed .stats { font-size: var(--fz-xs); }
-  main.container.themed .card .body { font-size: var(--fz-xs); }
-  main.container.themed .card .actions .btn { padding: var(--s-2) var(--s-4); }
-}
+/* ========================================================*
