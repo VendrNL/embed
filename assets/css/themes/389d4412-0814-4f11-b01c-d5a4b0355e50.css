@@ -1,4 +1,4 @@
-:root {
+:root { 
   --radius: 0px;
   --border: #e5e7eb;
   --text: #0f172a;
@@ -16,7 +16,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 1em/1.55 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font: 1em/1.55 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
@@ -29,7 +29,7 @@ body {
   z-index: 4000;
   background: #fff;
   border-bottom: 1px solid var(--border);
-  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 0.9em;
   box-shadow: 0 1px 0 rgba(0,0,0,0.04);
 }
@@ -68,7 +68,7 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   border: 1px solid var(--border);
   background: #fff;
   color: #0f172a;
-  font: 0.9em 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font: 0.9em 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Alerts & Stats */
@@ -105,24 +105,24 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 7 / ; /* 7 breed, 8 hoog */
+  aspect-ratio: 3 / 4; /* verhouding */
+  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .card .media .img {
-  transition: transform 0.5s ease; /* soepele animatie */
+  transition: transform 0.5s ease;
 }
 
 .card:hover .media .img {
-  transform: scale(1.05); /* 5% groter */
+  transform: scale(1.05);
 }
-
 
 .media {
   position: relative;
   z-index: 0;
   background: var(--panel-2, #f3f4f6);
   padding-top: 58%;
-  overflow: hidden
+  overflow: hidden;
 }
 
 .img {
@@ -140,6 +140,7 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   top: 12px;
   padding: 6px 10px;
   border-radius: 0px;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: 12px;
   background: #161670;
@@ -151,26 +152,38 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
 
 .body {
   padding: 14px 16px;
-  font: 0.9em 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.9em;
   flex: 1 1 auto;
 }
 
 .name {
   margin: 0 0 6px;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: 1.17em;
   line-height: 1.3;
 }
 
-.addr { margin: 0; color: var(--muted); }
-.meta { margin: 8px 0 0; color: var(--muted); font-size: .85em; }
+.addr {
+  margin: 0;
+  color: var(--muted);
+  font-family: 'Roboto', sans-serif;
+}
+
+.meta {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: .85em;
+  font-family: 'Roboto', sans-serif;
+}
 
 .actions {
   display: flex;
   gap: 10px;
   padding: 12px 16px;
-  margin-top: auto; /* altijd onderaan */
+  margin-top: auto;
+  font-family: 'Roboto', sans-serif;
 }
 
 .actions .btn {
@@ -182,5 +195,6 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  font-family: 'Roboto', sans-serif;
 }
 .actions .btn .ext { display: block; }
