@@ -25,7 +25,7 @@ main.container.themed {
   --c-link:         var(--c-primary);
 
   /* Statusbadge standaardkleur (Zakelijk/stijlvol) */
-  --c-badge:        #0b3a59;
+  --c-badge:        #161670;
   --c-badge-text:   #ffffff;
 
   /* Typografie (kan je vervangen door je font-utilities) */
@@ -44,8 +44,8 @@ main.container.themed {
   --fw-bold:        700;
 
   /* Layout & effecten */
-  --radius:         14px;
-  --radius-pill:    999px;
+  --radius:         0px;
+  --radius-pill:    0px;
   --shadow:         0 10px 30px rgba(11,58,89,.10);
   --shadow-soft:    0 2px 8px rgba(11,58,89,.08);
 
@@ -149,8 +149,8 @@ main.container.themed .card .media .img {
 /* Statusbadge (altijd gelijk, zoals eerder afgesproken) */
 main.container.themed .card .media span.badge {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 10;
+  top: 10;
   background-color: var(--c-badge); /* vaste kleur conform wens; wil je Redept-tint? vervang door var(--c-badge) */
   padding: 12px 32px;
   color: #FFF !important;
