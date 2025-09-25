@@ -3,7 +3,7 @@
   --border: #e5e7eb;
   --text: #0f172a;
   --muted: #475569;
-  --bg: #ffffff;
+  --bg: #f7fafc;
   --accent: #ff335C;
   --sold: #161670;
   --warn: #161670;
@@ -108,6 +108,15 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   aspect-ratio: 7 / ; /* 7 breed, 8 hoog */
 }
 
+.card .media .img {
+  transition: transform 0.5s ease; /* soepele animatie */
+}
+
+.card:hover .media .img {
+  transform: scale(1.05); /* 5% groter */
+}
+
+
 .media {
   position: relative;
   z-index: 0;
@@ -165,7 +174,7 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
 }
 
 .actions .btn {
-  /* border-radius: 999px; */
+  border-radius: 0px;
   padding: 6px 10px;
   background: var(--accent);
   color: #fff;
@@ -175,14 +184,3 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   gap: 6px;
 }
 .actions .btn .ext { display: block; }
-
-/* ==========================================================
-   Hover-effect op de card image
-   ========================================================== */
-main.container.themed .card .media .img {
-  transition: transform 0.5s ease; /* soepele animatie */
-}
-
-main.container.themed .card:hover .media .img {
-  transform: scale(1.05); /* 5% groter */
-}
