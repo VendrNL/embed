@@ -1,0 +1,53 @@
+/************************************************************
+ * FONT UTILITIES – snelle wissel tussen de 20 populairste
+ * Google Fonts (inclusief Roboto & Roboto Slab).
+ * Gebruik: voeg class toe aan <body> of <main>, bijv.
+ * <body class="font--poppins">
+ ************************************************************/
+
+/* Standaard (fallback) */
+body, main.container.themed {
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading, 'Roboto Slab', serif);
+}
+
+/* ================================================
+   BODY FONT CLASSES
+   ================================================ */
+.font--roboto         { --font-body: 'Roboto', sans-serif; }
+.font--roboto-slab    { --font-body: 'Roboto Slab', serif; }
+.font--open-sans      { --font-body: 'Open Sans', sans-serif; }
+.font--lato           { --font-body: 'Lato', sans-serif; }
+.font--montserrat     { --font-body: 'Montserrat', sans-serif; }
+.font--oswald         { --font-body: 'Oswald', sans-serif; }
+.font--raleway        { --font-body: 'Raleway', sans-serif; }
+.font--poppins        { --font-body: 'Poppins', sans-serif; }
+.font--merriweather   { --font-body: 'Merriweather', serif; }
+.font--nunito         { --font-body: 'Nunito', sans-serif; }
+.font--ubuntu         { --font-body: 'Ubuntu', sans-serif; }
+.font--playfair       { --font-body: 'Playfair Display', serif; }
+.font--source-sans    { --font-body: 'Source Sans Pro', sans-serif; }
+.font--inter          { --font-body: 'Inter', sans-serif; }
+.font--work-sans      { --font-body: 'Work Sans', sans-serif; }
+.font--quicksand      { --font-body: 'Quicksand', sans-serif; }
+.font--inconsolata    { --font-body: 'Inconsolata', monospace; }
+.font--dm-sans        { --font-body: 'DM Sans', sans-serif; }
+.font--fira-sans      { --font-body: 'Fira Sans', sans-serif; }
+.font--overpass       { --font-body: 'Overpass', sans-serif; }
+.font--cabin          { --font-body: 'Cabin', sans-serif; }
+
+/* ================================================
+   HEADING FONT CLASSES (optioneel)
+   ================================================ */
+.heading--roboto-slab    { --font-heading: 'Roboto Slab', serif; }
+.heading--roboto         { --font-heading: 'Roboto', sans-serif; }
+.heading--poppins        { --font-heading: 'Poppins', sans-serif; }
+.heading--montserrat     { --font-heading: 'Montserrat', sans-serif; }
+.heading--oswald         { --font-heading: 'Oswald', sans-serif; }
+.heading--raleway        { --font-heading: 'Raleway', sans-serif; }
+.heading--playfair       { --font-heading: 'Playfair Display', serif; }
+.heading--merriweather   { --font-heading: 'Merriweather', serif; }
+.heading--inter          { --font-heading: 'Inter', sans-serif; }
+.heading--work-sans      { --font-heading: 'Work Sans', sans-serif; }
