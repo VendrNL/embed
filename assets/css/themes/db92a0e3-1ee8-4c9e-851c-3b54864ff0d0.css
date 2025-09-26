@@ -19,7 +19,7 @@ main.container.themed {
 /*--c-panel:        #ffffff;  komt niet verder voor */
 /*--c-panel-2:      #f1f6f9;  achtergrond media, geen effect */
 /*--c-primary-2:    #0d3f72;  komt niet voor */
-/*--c-accent:       #012D55;  geen effect */
+    --accent:       #012D55;  /* kleur button */
 
   /* Typografie */
   --font-body:      'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
