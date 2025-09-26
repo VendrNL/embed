@@ -1,5 +1,5 @@
 /************************************************************
- * CUSTOM THEME – MVGM look (Flatsome-achtige stijl)
+ * CUSTOM THEME
  * Scope: main.container.themed …
  ************************************************************/
 
@@ -8,16 +8,18 @@
    ========================================================== */
 main.container.themed {
   /* Palet */
-  --c-bg:           #f7fafc;
-  --c-text:         #12212e;
-  --c-muted:        #5b6b7c;
-  --c-border:       #e6edf2;
-  --c-panel:        #ffffff;
-  --c-panel-2:      #f1f6f9;
-  --c-primary:      #012D55;
-  --c-primary-2:    #0d3f72;
-  --c-accent:       #012D55;
-  --c-card:         #B6D6DB;
+  --c-bg:           #f7fafc;  /kleur achtergrond van de pagina
+  --c-card:         #B6D6DB;  /achtergrond van de card
+  --c-border:       #e6edf2;  /kleur card rand
+  --c-pill:         #5D3D69;  /kleur pill
+  --c-primary:      #012D55;  /kleur van de titel van het project
+  --c-text:         #12212e;  /kleur standaard tekst
+  --c-addr: #12212e;  /kleur tekst adres
+  --c-muted:        #5b6b7c;  /kleur tekst ??
+/ --c-panel:        #ffffff;  /komt niet verder voor
+/ --c-panel-2:      #f1f6f9;  /achtergrond media, geen effect
+/ --c-primary-2:    #0d3f72;  /komt niet voor
+/ --c-accent:       #012D55;  /geen effect
 
   /* Typografie */
   --font-body:      'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
@@ -29,9 +31,9 @@ main.container.themed {
   --fw-bold:        700;
 
   /* Layout */
-  --radius:         14px;
-  --radius-pill:    999px;
-  --shadow:         0 8px 24px rgba(1,45,85,0.08);
+  --radius:         14px;  /ronde hoek van de card
+  --radius-pill:    999px;  /ronde hoek van de pill
+  --shadow:         0 8px 24px rgba(1,45,85,0.08);  /dit is de standaard shadow
   --shadow-soft:    0 1px 3px rgba(1,45,85,0.06);
   --s-1: 6px; --s-2: 10px; --s-3: 12px; --s-4: 14px; --s-5: 16px; --s-6: 20px; --s-7: 24px;
 }
@@ -115,7 +117,7 @@ main.container.themed .card .media span.badge {
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #5D3D69;
+  background-color: var(--c-pill);
   padding: 12px 32px;
   color: #FFF !important;
   font-family: 'Roboto Slab', sans-serif;
@@ -152,7 +154,7 @@ main.container.themed .card .body .name {
 }
 main.container.themed .card .body .addr {
   margin: 0;
-  color: var(--c-text);
+  color: var(--c-addr);
   opacity: .9;
 }
 main.container.themed .card .body .meta {
