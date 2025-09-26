@@ -31,7 +31,7 @@ main.container.themed {
   --fw-bold:        700;
 
   /* Layout */
-  --radius:         14px;  /ronde hoek van de card
+  --radius:         0px;  /ronde hoek van de card
   --radius-button:  0px;  /ronde hoek van de button
   --shadow:         0 8px 24px rgba(1,45,85,0.08);  /* dit is de standaard shadow  */
   --shadow-soft:    0 1px 3px rgba(1,45,85,0.06);
@@ -112,20 +112,20 @@ main.container.themed .card .media .img {
   object-fit: cover;
 }
 
-/* Badge altijd met vaste styling */
+/* Badge */
 main.container.themed .card .media span.badge {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 10;
+  top: 10;
   background-color: var(--c-pill);
   padding: 12px 32px;
   color: #FFF !important;
-  font-family: 'Roboto Slab', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: var(--fw-bold);
   line-height: 2rem;
   margin: 0 0 16px 0;
-  border-radius: 14px 0 0 0;
+  border-radius: 0 0 0 0;
   display: inline-block;
   box-shadow:
     rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
