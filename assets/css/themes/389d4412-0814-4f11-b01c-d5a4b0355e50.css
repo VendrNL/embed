@@ -124,7 +124,7 @@ main.container.themed .card .media span.badge {
   font-size: 1.15rem;
   font-weight: var(--fw-bold);
   line-height: 2rem;
-  margin: 0 0 16px 0;
+  margin: 0 0 8px 0;
   border-radius: 0 0 0 0;
   display: inline-block;
   box-shadow:
