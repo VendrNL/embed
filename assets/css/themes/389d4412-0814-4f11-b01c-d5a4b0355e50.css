@@ -118,7 +118,7 @@ main.container.themed .card .media span.badge {
   left: 10;
   top: 10;
   background-color: var(--c-pill);
-  padding: 12px 32px;
+  padding: 8px 8px;
   color: #FFF !important;
   font-family: var(--font-body);
   font-size: 1.15rem;
