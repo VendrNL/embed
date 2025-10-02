@@ -67,14 +67,98 @@
 
   <!-- Main content (themed) -->
   <main class="container themed" id="main">
-    <!-- Foutmeldingen -->
-    <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
+    <div class="themed-layout">
+      <aside class="style-panel" aria-labelledby="style-panel-title">
+        <div class="style-panel__intro">
+          <h2 id="style-panel-title">Stijl</h2>
+          <p>Pas kleuren, fonts en kaartopmaak aan zonder het filterblok in de header aan te passen.</p>
+        </div>
 
-    <!-- Statistieken / aantallen -->
-    <div id="stats" class="stats"></div>
+        <form class="style-panel__form" autocomplete="off">
+          <fieldset class="style-panel__section">
+            <legend>Kleuren</legend>
+            <label class="style-panel__field" for="stylePrimaryColor">
+              <span>Primaire kleur</span>
+              <input type="color" id="stylePrimaryColor" name="stylePrimaryColor"
+                     data-css-prop="--c-primary --c-accent --accent"
+                     value="#012d55" />
+            </label>
 
-    <!-- Grid met kaarten -->
-    <div id="grid" class="grid" aria-live="polite"></div>
+            <label class="style-panel__field" for="styleAccentColor">
+              <span>Accentkleur</span>
+              <input type="color" id="styleAccentColor" name="styleAccentColor"
+                     data-css-prop="--c-pill --badge-color"
+                     value="#5d3d69" />
+            </label>
+
+            <label class="style-panel__field" for="styleCardColor">
+              <span>Kaart achtergrond</span>
+              <input type="color" id="styleCardColor" name="styleCardColor"
+                     data-css-prop="--c-card"
+                     value="#ffffff" />
+            </label>
+          </fieldset>
+
+          <fieldset class="style-panel__section">
+            <legend>Typografie</legend>
+            <label class="style-panel__field" for="styleBodyFont">
+              <span>Bodyfont</span>
+              <select id="styleBodyFont" data-font-target="body">
+                <option value="inter">Inter</option>
+                <option value="roboto">Roboto</option>
+                <option value="roboto-slab">Roboto Slab</option>
+              </select>
+            </label>
+
+            <label class="style-panel__field" for="styleHeadingFont">
+              <span>Kopfont</span>
+              <select id="styleHeadingFont" data-font-target="heading">
+                <option value="roboto-slab">Roboto Slab</option>
+                <option value="inter">Inter</option>
+                <option value="roboto">Roboto</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="style-panel__section">
+            <legend>Kaartopmaak</legend>
+            <label class="style-panel__field" for="styleRadius">
+              <span>Hoekradius</span>
+              <input type="range" id="styleRadius" min="0" max="32" step="2" value="14"
+                     data-css-prop="--radius" data-unit="px" />
+            </label>
+
+            <label class="style-panel__field" for="styleMediaRatio">
+              <span>Afbeeldingshoogte</span>
+              <input type="range" id="styleMediaRatio" min="40" max="80" step="2" value="58"
+                     data-css-prop="--media-ratio" data-unit="%" />
+            </label>
+
+            <label class="style-panel__field" for="styleElevation">
+              <span>Schaduw</span>
+              <input type="range" id="styleElevation" min="0" max="12" step="1" value="4"
+                     data-elevation />
+            </label>
+
+            <label class="style-panel__toggle" for="styleOutline">
+              <input type="checkbox" id="styleOutline" checked />
+              <span>Rand zichtbaar</span>
+            </label>
+          </fieldset>
+        </form>
+      </aside>
+
+      <section class="results" aria-label="Resultaten">
+        <!-- Foutmeldingen -->
+        <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
+
+        <!-- Statistieken / aantallen -->
+        <div id="stats" class="stats"></div>
+
+        <!-- Grid met kaarten -->
+        <div id="grid" class="grid" aria-live="polite"></div>
+      </section>
+    </div>
   </main>
 
   <!-- Kaarttemplate -->
