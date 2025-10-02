@@ -215,3 +215,165 @@ async function loadDataFromMeta(meta) {
     showError(e.message || String(e));
   }
 })();
+
+const FONT_MAP = {
+  inter: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+  roboto: "'Roboto', -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+  'roboto-slab': "'Roboto Slab', 'Times New Roman', serif"
+};
+
+let COLOR_CANVAS = null;
+
+function normalizeCssColor(value) {
+  if (!value) return null;
+  const canvas = COLOR_CANVAS || (COLOR_CANVAS = document.createElement('canvas'));
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return value.trim();
+  try {
+    ctx.fillStyle = '#000';
+    ctx.fillStyle = value.trim();
+    const normalized = ctx.fillStyle || value.trim();
+    if (/^rgba?/i.test(normalized)) {
+      const parts = normalized.replace(/rgba?\(|\)|\s+/gi, '').split(',');
+      const [r, g, b] = parts.map(Number);
+      if ([r, g, b].every(n => Number.isFinite(n))) {
+        return '#' + [r, g, b].map(n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0')).join('');
+      }
+    }
+    return normalized;
+  } catch (e) {
+    return value.trim();
+  }
+}
+
+function initColorInputs(main, form) {
+  const computed = getComputedStyle(main);
+  form.querySelectorAll('input[type="color"][data-css-prop]').forEach(input => {
+    const props = input.dataset.cssProp?.split(/\s+/).filter(Boolean) || [];
+    if (!props.length) return;
+
+    const fallback = input.value;
+    const current = normalizeCssColor(computed.getPropertyValue(props[0]).trim()) || fallback;
+    if (current) input.value = current;
+
+    input.addEventListener('input', () => {
+      const val = input.value;
+      props.forEach(prop => {
+        main.style.setProperty(prop, val);
+        document.documentElement.style.setProperty(prop, val);
+      });
+      if (props.includes('--accent')) {
+        document.documentElement.style.setProperty('--accent', val);
+      }
+      if (props.includes('--border')) {
+        document.documentElement.style.setProperty('--border', val);
+      }
+    });
+  });
+}
+
+function initRangeInputs(main, form) {
+  const computed = getComputedStyle(main);
+  form.querySelectorAll('input[type="range"][data-css-prop]').forEach(input => {
+    const prop = input.dataset.cssProp;
+    if (!prop) return;
+    const unit = input.dataset.unit || '';
+    const current = computed.getPropertyValue(prop).trim();
+    if (current) {
+      const numeric = parseFloat(current);
+      if (!Number.isNaN(numeric)) {
+        input.value = String(numeric);
+      }
+    }
+
+    input.addEventListener('input', () => {
+      const value = input.value + unit;
+      main.style.setProperty(prop, value);
+      document.documentElement.style.setProperty(prop, value);
+    });
+  });
+}
+
+function initElevation(main, form) {
+  const slider = form.querySelector('input[type="range"][data-elevation]');
+  if (!slider) return;
+
+  const computed = getComputedStyle(main).getPropertyValue('--card-shadow').trim();
+  if (computed && computed !== 'none') {
+    const match = computed.match(/0\s+(\d+(?:\.\d+)?)px/i);
+    if (match) {
+      slider.value = String(Math.round(Number(match[1])));
+    }
+  }
+
+  const applyElevation = (level) => {
+    const amount = Math.max(0, Number(level) || 0);
+    if (amount === 0) {
+      main.style.setProperty('--card-shadow', 'none');
+      return;
+    }
+    const blur = Math.round(amount * 3);
+    const spread = Math.round(amount * 0.5);
+    const shadow = `0 ${amount}px ${blur}px ${spread ? spread + 'px' : '0'} rgba(15,23,42,0.15)`;
+    main.style.setProperty('--card-shadow', shadow);
+  };
+
+  applyElevation(slider.value);
+  slider.addEventListener('input', () => applyElevation(slider.value));
+}
+
+function initOutline(main, form) {
+  const toggle = form.querySelector('#styleOutline');
+  if (!toggle) return;
+
+  const apply = (checked) => {
+    main.dataset.cardOutline = checked ? '1' : '0';
+  };
+
+  apply(toggle.checked);
+  toggle.addEventListener('change', () => apply(toggle.checked));
+}
+
+function initFontSelects(main, form) {
+  const rootStyle = document.documentElement.style;
+  const computed = getComputedStyle(document.documentElement);
+
+  form.querySelectorAll('select[data-font-target]').forEach(select => {
+    const target = select.dataset.fontTarget;
+    const cssVar = target === 'heading' ? '--font-heading' : '--font-body';
+    const current = (computed.getPropertyValue(cssVar) || '').trim().toLowerCase();
+    const match = Object.entries(FONT_MAP).find(([, stack]) => stack.toLowerCase() === current);
+    if (match) {
+      select.value = match[0];
+    }
+
+    select.addEventListener('change', () => {
+      const key = select.value;
+      const stack = FONT_MAP[key];
+      if (!stack) return;
+      rootStyle.setProperty(cssVar, stack);
+      if (target === 'body') {
+        document.body.style.fontFamily = stack;
+      }
+      main.style.setProperty(cssVar, stack);
+    });
+  });
+}
+
+function initStylePanel() {
+  const main = document.querySelector('main.container.themed');
+  const form = document.querySelector('.style-panel__form');
+  if (!main || !form) return;
+
+  initColorInputs(main, form);
+  initRangeInputs(main, form);
+  initElevation(main, form);
+  initOutline(main, form);
+  initFontSelects(main, form);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStylePanel, { once: true });
+} else {
+  initStylePanel();
+}
