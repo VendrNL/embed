@@ -1,6 +1,7 @@
 @page "/"
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@using MudBlazor.Utilities
 
 <PageTitle>@PageHeading</PageTitle>
 
@@ -20,63 +21,136 @@ else if (!string.IsNullOrEmpty(_error))
 else
 {
     <MudStack Spacing="3">
-        <MudPaper Class="pa-4" Elevation="1">
-            <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
-                <MudSelect T="string" @bind-Value="SelectedProvince" Label="Provincie" Clearable="true" Dense="true">
-                    <MudSelectItem Value="">Alle provincies</MudSelectItem>
-                    @foreach (var province in _availableProvinces)
-                    {
-                        <MudSelectItem Value="@province">@province</MudSelectItem>
-                    }
-                </MudSelect>
+        <MudStack Row="true" AlignItems="AlignItems.Stretch" Spacing="2" Class="layout-root">
+            <MudPaper Class="@($"filters-panel pa-4{(_filtersCollapsed ? " collapsed" : string.Empty)}")" Elevation="1">
+                <MudStack Spacing="1.5">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" JustifyContent="Justify.SpaceBetween" Class="filters-header">
+                        <MudText Typo="Typo.subtitle2" Class="filters-title">Filters</MudText>
+                        <MudTooltip Text="@(_filtersCollapsed ? "Filters openen" : "Filters inklappen")">
+                            <MudIconButton Icon="@FilterToggleIcon"
+                                           Color="Color.Primary"
+                                           Variant="Variant.Text"
+                                           Size="Size.Small"
+                                           OnClick="ToggleFilters"
+                                           Class="toggle-button" />
+                        </MudTooltip>
+                    </MudStack>
+                    <MudDivider />
+                    <MudCollapse Expanded="@(!_filtersCollapsed)">
+                        <MudStack Spacing="1.5" Class="filters-content">
+                            <MudSelect T="string" @bind-Value="SelectedProvince" Label="Provincie" Clearable="true" Dense="true" DisableUnderLine="true">
+                                <MudSelectItem Value="">Alle provincies</MudSelectItem>
+                                @foreach (var province in _availableProvinces)
+                                {
+                                    <MudSelectItem Value="@province">@province</MudSelectItem>
+                                }
+                            </MudSelect>
 
-                <MudSelect T="string" @bind-Value="SelectedType" Label="Type vastgoed" Clearable="true" Dense="true">
-                    <MudSelectItem Value="">Alle typen</MudSelectItem>
-                    @foreach (var type in _availableTypes)
-                    {
-                        <MudSelectItem Value="@type">@type</MudSelectItem>
-                    }
-                </MudSelect>
+                            <MudSelect T="string" @bind-Value="SelectedType" Label="Type vastgoed" Clearable="true" Dense="true" DisableUnderLine="true">
+                                <MudSelectItem Value="">Alle typen</MudSelectItem>
+                                @foreach (var type in _availableTypes)
+                                {
+                                    <MudSelectItem Value="@type">@type</MudSelectItem>
+                                }
+                            </MudSelect>
 
-                <MudSelect T="string" @bind-Value="SelectedStatus" Label="Status" Clearable="true" Dense="true">
-                    <MudSelectItem Value="">Alle statussen</MudSelectItem>
-                    @foreach (var option in _statusOptions)
+                            <MudSelect T="string" @bind-Value="SelectedStatus" Label="Status" Clearable="true" Dense="true" DisableUnderLine="true">
+                                <MudSelectItem Value="">Alle statussen</MudSelectItem>
+                                @foreach (var option in _statusOptions)
+                                {
+                                    <MudSelectItem Value="@option.Key">@option.Value</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudStack>
+                    </MudCollapse>
+                </MudStack>
+            </MudPaper>
+
+            <MudStack Class="main-column" Spacing="2" Style="@MainFontStyle">
+                <MudText Typo="Typo.subtitle1" Class="font-semibold">
+                    @_filtered.Count resultaat@(_filtered.Count == 1 ? string.Empty : "en")
+                </MudText>
+
+                <MudGrid GutterSize="GutterSize.Medium">
+                    @foreach (var listing in _filtered)
                     {
-                        <MudSelectItem Value="@option.Key">@option.Value</MudSelectItem>
+                        <MudItem xs="12" sm="6" md="4" lg="3">
+                            <MudCard Elevation="@_cardElevation" Outlined="@_cardOutlined" Class="h-100 d-flex flex-column" Style="@GetCardStyle()">
+                                <MudCardMedia Image="@GetImage(listing)" Height="@($"{_cardImageHeight}px")" Style="@GetCardMediaStyle()" />
+                                <MudCardContent Class="d-flex flex-column gap-2">
+                                    <MudChip Color="Color.Primary" Variant="Variant.Filled" Label="true">@listing.StatusLabel()</MudChip>
+                                    <MudText Typo="Typo.h6" Class="mb-0">@listing.Name</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-secondary">@listing.FullAddress</MudText>
+                                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Class="text-caption text-secondary">
+                                        <MudIcon Icon="@Icons.Material.Filled.Place" Size="Size.Small" />
+                                        <MudText Typo="Typo.caption">@listing.ComputedProvince</MudText>
+                                    </MudStack>
+                                </MudCardContent>
+                                <MudCardActions Class="mt-auto">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="@listing.Url" Target="_blank" Rel="noopener">
+                                        Bekijk op Vendr
+                                        <MudIcon Icon="@Icons.Material.Filled.OpenInNew" Class="ml-1" Size="Size.Small" />
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
                     }
-                </MudSelect>
+                </MudGrid>
             </MudStack>
-        </MudPaper>
 
-        <MudText Typo="Typo.subtitle1" Style="font-weight:600;">
-            @_filtered.Count resultaat@(_filtered.Count == 1 ? string.Empty : "en")
-        </MudText>
+            <MudPaper Class="style-panel pa-4" Elevation="1">
+                <MudStack Spacing="1.5">
+                    <MudStack Spacing="0.5">
+                        <MudText Typo="Typo.subtitle2">Stijl</MudText>
+                        <MudText Typo="Typo.caption" Class="text-secondary">Pas de kleuren en kaarten visueel aan.</MudText>
+                    </MudStack>
+                    <MudDivider />
 
-        <MudGrid GutterSize="GutterSize.Medium">
-            @foreach (var listing in _filtered)
-            {
-                <MudItem xs="12" sm="6" md="4" lg="3">
-                    <MudCard Elevation="1" Class="h-100 d-flex flex-column">
-                        <MudCardMedia Image="@GetImage(listing)" Height="180px" />
-                        <MudCardContent Class="d-flex flex-column gap-2">
-                            <MudChip Color="Color.Primary" Variant="Variant.Filled" Label="true">@listing.StatusLabel()</MudChip>
-                            <MudText Typo="Typo.h6" Class="mb-0">@listing.Name</MudText>
-                            <MudText Typo="Typo.body2" Class="text-secondary">@listing.FullAddress</MudText>
-                            <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center" Class="text-caption text-secondary">
-                                <MudIcon Icon="@Icons.Material.Filled.Place" Size="Size.Small" />
-                                <MudText Typo="Typo.caption">@listing.ComputedProvince</MudText>
-                            </MudStack>
-                        </MudCardContent>
-                        <MudCardActions Class="mt-auto">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@listing.Url" Target="_blank" Rel="noopener">
-                                Bekijk op Vendr
-                                <MudIcon Icon="@Icons.Material.Filled.OpenInNew" Class="ml-1" Size="Size.Small" />
-                            </MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
-        </MudGrid>
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Primaire kleur</MudText>
+                        <MudColorPicker @bind-Color="PrimaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                    </MudStack>
+
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Accentkleur</MudText>
+                        <MudColorPicker @bind-Color="SecondaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                    </MudStack>
+
+                    <MudDivider />
+
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Lettertype</MudText>
+                        <MudSelect T="string" @bind-Value="_selectedFontKey" Dense="true" DisableUnderLine="true">
+                            @foreach (var option in _fontOptions)
+                            {
+                                <MudSelectItem Value="@option.Key">@option.Key</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudStack>
+
+                    <MudDivider />
+
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Kaart-elevatie</MudText>
+                        <MudSlider T="int" @bind-Value="_cardElevation" Min="0" Max="12" Step="1" Color="Color.Primary" ValueLabel="true" />
+                    </MudStack>
+
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Hoekradius</MudText>
+                        <MudSlider T="int" @bind-Value="_cardCornerRadius" Min="0" Max="32" Step="2" Color="Color.Primary" ValueLabel="true" />
+                    </MudStack>
+
+                    <MudStack Spacing="0.75">
+                        <MudText Typo="Typo.caption" Class="font-semibold">Afbeelding hoogte</MudText>
+                        <MudSlider T="int" @bind-Value="_cardImageHeight" Min="140" Max="260" Step="10" Color="Color.Primary" ValueLabel="true" />
+                    </MudStack>
+
+                    <MudDivider />
+
+                    <MudSwitch @bind-Checked="_cardOutlined" Color="Color.Primary" Label="Rand zichtbaar" />
+                </MudStack>
+            </MudPaper>
+        </MudStack>
     </MudStack>
 }
 
@@ -95,10 +169,24 @@ else
     private readonly List<Listing> _filtered = new();
     private readonly List<string> _availableProvinces = new();
     private readonly List<string> _availableTypes = new();
+    private readonly Dictionary<string, string> _fontOptions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Inter"] = "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+        ["Roboto"] = "'Roboto', -apple-system, 'Segoe UI', sans-serif",
+        ["Roboto Slab"] = "'Roboto Slab', 'Times New Roman', serif"
+    };
 
     private string? _selectedProvince;
     private string? _selectedType;
     private string? _selectedStatus;
+    private bool _filtersCollapsed;
+    private bool _cardOutlined;
+    private int _cardElevation = 1;
+    private int _cardCornerRadius = 12;
+    private int _cardImageHeight = 180;
+    private string _selectedFontKey = "Inter";
+    private MudColor _primaryColor = DefaultPrimaryColor;
+    private MudColor _secondaryColor = DefaultSecondaryColor;
     private string? _error;
     private bool _loading = true;
     private RealtorMeta? _meta;
@@ -186,19 +274,10 @@ else
         {
             Layout?.SetHeader(HeaderFragment);
 
-            if (!string.IsNullOrWhiteSpace(_meta.Color) && RootApp is not null)
-            {
-                var palette = new Palette
-                {
-                    Primary = _meta.Color,
-                    Secondary = _meta.Color,
-                    AppbarBackground = _meta.Color,
-                    AppbarText = "#ffffff"
-                };
-
-                await RootApp.SetPaletteAsync(palette);
-            }
+            InitializeStyleFromMeta(_meta);
         }
+
+        await ApplyCurrentPaletteAsync();
     }
 
     private async Task<IReadOnlyList<Listing>> FetchListingsAsync(string url)
@@ -279,6 +358,19 @@ else
     private string FormatWebsite(string website)
         => website.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? website : $"https://{website}";
 
+    private string FilterToggleIcon => _filtersCollapsed ? Icons.Material.Filled.ChevronRight : Icons.Material.Filled.ChevronLeft;
+
+    private string MainFontStyle
+        => _fontOptions.TryGetValue(_selectedFontKey, out var stack)
+            ? $"font-family:{stack};"
+            : $"font-family:{_fontOptions["Inter"]};";
+
+    private string GetCardStyle()
+        => $"border-radius:{_cardCornerRadius}px;";
+
+    private string GetCardMediaStyle()
+        => $"border-top-left-radius:{_cardCornerRadius}px;border-top-right-radius:{_cardCornerRadius}px;";
+
     private string? SelectedProvince
     {
         get => _selectedProvince;
@@ -308,4 +400,84 @@ else
             ApplyFilters();
         }
     }
+
+    private MudColor PrimaryColor
+    {
+        get => _primaryColor;
+        set
+        {
+            if (_primaryColor.Equals(value))
+            {
+                return;
+            }
+
+            _primaryColor = value;
+            _ = ApplyCurrentPaletteAsync();
+        }
+    }
+
+    private MudColor SecondaryColor
+    {
+        get => _secondaryColor;
+        set
+        {
+            if (_secondaryColor.Equals(value))
+            {
+                return;
+            }
+
+            _secondaryColor = value;
+            _ = ApplyCurrentPaletteAsync();
+        }
+    }
+
+    private void ToggleFilters()
+    {
+        _filtersCollapsed = !_filtersCollapsed;
+    }
+
+    private void InitializeStyleFromMeta(RealtorMeta meta)
+    {
+        if (!string.IsNullOrWhiteSpace(meta.Color))
+        {
+            _primaryColor = SafeCreateColor(meta.Color);
+            _secondaryColor = _primaryColor;
+        }
+    }
+
+    private async Task ApplyCurrentPaletteAsync()
+    {
+        if (RootApp is null)
+        {
+            return;
+        }
+
+        var palette = new Palette
+        {
+            Primary = ToHex(_primaryColor),
+            Secondary = ToHex(_secondaryColor),
+            AppbarBackground = ToHex(_primaryColor),
+            AppbarText = "#ffffff"
+        };
+
+        await RootApp.SetPaletteAsync(palette);
+    }
+
+    private static MudColor SafeCreateColor(string value)
+    {
+        try
+        {
+            return new MudColor(value);
+        }
+        catch
+        {
+            return DefaultPrimaryColor;
+        }
+    }
+
+    private static string ToHex(MudColor color)
+        => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+
+    private static readonly MudColor DefaultPrimaryColor = new("#005c77");
+    private static readonly MudColor DefaultSecondaryColor = new("#2196f3");
 }
