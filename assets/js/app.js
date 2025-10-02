@@ -8,9 +8,11 @@ const $prov   = document.getElementById('filterProvincie');
 const $type   = document.getElementById('filterType');
 const $status = document.getElementById('filterStatus');
 
-const $logo      = document.getElementById('realtorLogo');
-const $link      = document.getElementById('realtorLink');
-const $themeLink = document.getElementById('themeStylesheet');
+const $logo       = document.getElementById('realtorLogo');
+const $link       = document.getElementById('realtorLink');
+let $themeLink    = document.getElementById('themeStylesheet');
+const $stylePanel = document.querySelector('.style-panel');
+const $mainThemed = document.querySelector('main.container.themed');
 
 const params = new URLSearchParams(location.search);
 const realtorKey = (params.get('realtor') || '').trim().toLowerCase();
@@ -18,6 +20,7 @@ const overrideFeed = params.get('feed')?.trim();
 
 let RAW = [];
 let FILTERED = [];
+let CURRENT_MEDIA_RATIO = null;
 
 function showError(msg) {
   if (!$alert) return;
@@ -111,6 +114,8 @@ function renderCards(items) {
   });
 
   if ($stats) $stats.textContent = `${items.length} resultaten`;
+
+  applyMediaRatioToCards(CURRENT_MEDIA_RATIO || readMediaRatio());
 }
 
 function populateFilterOptions(items) {
@@ -183,6 +188,7 @@ async function loadDataFromMeta(meta) {
       $type?.addEventListener('change', applyFilters);
       $status?.addEventListener('change', applyFilters);
       renderCards(RAW);
+      initStylePanel();
       return;
     }
 
@@ -194,7 +200,8 @@ async function loadDataFromMeta(meta) {
     if (!meta) throw new Error(`Onbekende realtor "${realtorKey}". Controleer data/realtors.json`);
 
     // Merk & thema
-    if ($themeLink && meta.stylesheet_local) $themeLink.href = meta.stylesheet_local;
+    await applyThemeStylesheet(meta);
+    initStylePanel();
     if ($logo && meta.logo) { $logo.src = meta.logo; $logo.alt = meta.name || 'Realtor'; }
     if ($link && meta.website) {
       $link.href = /^https?:\/\//i.test(meta.website) ? meta.website : ('https://' + meta.website);
@@ -211,6 +218,7 @@ async function loadDataFromMeta(meta) {
     $status?.addEventListener('change', applyFilters);
 
     renderCards(RAW);
+    initStylePanel();
   } catch (e) {
     showError(e.message || String(e));
   }
@@ -252,23 +260,30 @@ function initColorInputs(main, form) {
     const props = input.dataset.cssProp?.split(/\s+/).filter(Boolean) || [];
     if (!props.length) return;
 
-    const fallback = input.value;
+    if (!input.dataset.defaultColor) {
+      input.dataset.defaultColor = input.getAttribute('value') || input.value;
+    }
+
+    const fallback = input.dataset.defaultColor;
     const current = normalizeCssColor(computed.getPropertyValue(props[0]).trim()) || fallback;
     if (current) input.value = current;
 
-    input.addEventListener('input', () => {
-      const val = input.value;
-      props.forEach(prop => {
-        main.style.setProperty(prop, val);
-        document.documentElement.style.setProperty(prop, val);
+    if (input.dataset.colorInit !== '1') {
+      input.dataset.colorInit = '1';
+      input.addEventListener('input', () => {
+        const val = input.value;
+        props.forEach(prop => {
+          main.style.setProperty(prop, val);
+          document.documentElement.style.setProperty(prop, val);
+        });
+        if (props.includes('--accent')) {
+          document.documentElement.style.setProperty('--accent', val);
+        }
+        if (props.includes('--border')) {
+          document.documentElement.style.setProperty('--border', val);
+        }
       });
-      if (props.includes('--accent')) {
-        document.documentElement.style.setProperty('--accent', val);
-      }
-      if (props.includes('--border')) {
-        document.documentElement.style.setProperty('--border', val);
-      }
-    });
+    }
   });
 }
 
@@ -286,11 +301,22 @@ function initRangeInputs(main, form) {
       }
     }
 
-    input.addEventListener('input', () => {
-      const value = input.value + unit;
-      main.style.setProperty(prop, value);
-      document.documentElement.style.setProperty(prop, value);
-    });
+    const ratioValue = current || (input.value ? input.value + unit : '');
+    if (prop === '--media-ratio' && ratioValue) {
+      applyMediaRatioToCards(ratioValue);
+    }
+
+    if (input.dataset.rangeInit !== '1') {
+      input.dataset.rangeInit = '1';
+      input.addEventListener('input', () => {
+        const value = input.value + unit;
+        main.style.setProperty(prop, value);
+        document.documentElement.style.setProperty(prop, value);
+        if (prop === '--media-ratio') {
+          applyMediaRatioToCards(value);
+        }
+      });
+    }
   });
 }
 
@@ -319,7 +345,10 @@ function initElevation(main, form) {
   };
 
   applyElevation(slider.value);
-  slider.addEventListener('input', () => applyElevation(slider.value));
+  if (slider.dataset.elevationInit !== '1') {
+    slider.dataset.elevationInit = '1';
+    slider.addEventListener('input', () => applyElevation(slider.value));
+  }
 }
 
 function initOutline(main, form) {
@@ -330,8 +359,13 @@ function initOutline(main, form) {
     main.dataset.cardOutline = checked ? '1' : '0';
   };
 
+  const isOutlined = main.dataset.cardOutline !== '0';
+  toggle.checked = isOutlined;
   apply(toggle.checked);
-  toggle.addEventListener('change', () => apply(toggle.checked));
+  if (toggle.dataset.outlineInit !== '1') {
+    toggle.dataset.outlineInit = '1';
+    toggle.addEventListener('change', () => apply(toggle.checked));
+  }
 }
 
 function initFontSelects(main, form) {
@@ -347,33 +381,183 @@ function initFontSelects(main, form) {
       select.value = match[0];
     }
 
-    select.addEventListener('change', () => {
-      const key = select.value;
-      const stack = FONT_MAP[key];
-      if (!stack) return;
-      rootStyle.setProperty(cssVar, stack);
-      if (target === 'body') {
-        document.body.style.fontFamily = stack;
-      }
-      main.style.setProperty(cssVar, stack);
-    });
+    if (select.dataset.fontInit !== '1') {
+      select.dataset.fontInit = '1';
+      select.addEventListener('change', () => {
+        const key = select.value;
+        const stack = FONT_MAP[key];
+        if (!stack) return;
+        rootStyle.setProperty(cssVar, stack);
+        if (target === 'body') {
+          document.body.style.fontFamily = stack;
+        }
+        main.style.setProperty(cssVar, stack);
+      });
+    }
   });
 }
 
 function initStylePanel() {
-  const main = document.querySelector('main.container.themed');
+  if (!$mainThemed) return;
   const form = document.querySelector('.style-panel__form');
-  if (!main || !form) return;
+  if (!form) return;
 
-  initColorInputs(main, form);
-  initRangeInputs(main, form);
-  initElevation(main, form);
-  initOutline(main, form);
-  initFontSelects(main, form);
+  ensureStylePanelVisible();
+
+  initColorInputs($mainThemed, form);
+  initRangeInputs($mainThemed, form);
+  initElevation($mainThemed, form);
+  initOutline($mainThemed, form);
+  initFontSelects($mainThemed, form);
+
+  applyMediaRatioToCards(CURRENT_MEDIA_RATIO || readMediaRatio());
 }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initStylePanel, { once: true });
 } else {
   initStylePanel();
+}
+
+function ensureStylePanelVisible() {
+  if (!$stylePanel) return;
+  $stylePanel.hidden = false;
+  const enforce = () => {
+    $stylePanel.style.setProperty('display', 'flex', 'important');
+  };
+  try {
+    const display = getComputedStyle($stylePanel).display;
+    if (display === 'none') {
+      enforce();
+    }
+  } catch (e) {
+    enforce();
+  }
+  enforce();
+}
+
+function readMediaRatio() {
+  if (!$mainThemed) return '58%';
+  const inline = $mainThemed.style.getPropertyValue('--media-ratio');
+  if (inline && inline.trim()) return inline.trim();
+  try {
+    const computed = getComputedStyle($mainThemed).getPropertyValue('--media-ratio');
+    if (computed && computed.trim()) return computed.trim();
+  } catch (e) {
+    // ignore errors (e.g. detached node)
+  }
+  return '58%';
+}
+
+function applyMediaRatioToCards(ratio) {
+  if (!ratio) return;
+  CURRENT_MEDIA_RATIO = ratio;
+  document.querySelectorAll('.grid .media').forEach(node => {
+    node.style.paddingTop = ratio;
+  });
+}
+
+function waitForStylesheet(link) {
+  return new Promise(resolve => {
+    if (!link) {
+      resolve();
+      return;
+    }
+
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      link.removeEventListener('load', onLoad);
+      link.removeEventListener('error', onError);
+      resolve();
+    };
+
+    const onLoad = () => done();
+    const onError = () => done();
+
+    try {
+      if (link.sheet && link.sheet.cssRules) {
+        resolve();
+        return;
+      }
+    } catch (e) {
+      // Accessing cssRules on cross-origin stylesheets throws; fall back to events/timeouts
+    }
+
+    link.addEventListener('load', onLoad, { once: true });
+    link.addEventListener('error', onError, { once: true });
+    setTimeout(done, 1500);
+  });
+}
+
+async function swapThemeStylesheet(href) {
+  if (!href) return false;
+
+  if (!$themeLink) {
+    $themeLink = document.createElement('link');
+    $themeLink.rel = 'stylesheet';
+    $themeLink.id = 'themeStylesheet';
+    document.head.appendChild($themeLink);
+  }
+
+  const previous = $themeLink.getAttribute('href');
+  const absolutePrev = previous ? new URL(previous, location.href).href : null;
+  const absoluteNew = new URL(href, location.href).href;
+
+  if (absolutePrev === absoluteNew) {
+    await waitForStylesheet($themeLink);
+    return true;
+  }
+
+  return new Promise(resolve => {
+    let settled = false;
+    const cleanup = (success) => {
+      if (settled) return;
+      settled = true;
+      $themeLink.removeEventListener('load', onLoad);
+      $themeLink.removeEventListener('error', onError);
+      clearTimeout(timer);
+      if (!success && previous) {
+        $themeLink.setAttribute('href', previous);
+      }
+      resolve(success);
+    };
+
+    const onLoad = () => cleanup(true);
+    const onError = () => cleanup(false);
+
+    $themeLink.addEventListener('load', onLoad, { once: true });
+    $themeLink.addEventListener('error', onError, { once: true });
+
+    const timer = setTimeout(() => cleanup(true), 1500);
+
+    $themeLink.setAttribute('href', href);
+  });
+}
+
+async function applyThemeStylesheet(meta) {
+  if (!meta) return;
+
+  const tried = new Set();
+  const candidates = [];
+  if (meta.stylesheet_local) candidates.push(meta.stylesheet_local);
+  if (meta.stylesheet_src) candidates.push(meta.stylesheet_src);
+
+  for (const href of candidates) {
+    if (!href) continue;
+    const absolute = new URL(href, location.href).href;
+    if (tried.has(absolute)) continue;
+    tried.add(absolute);
+
+    const success = await swapThemeStylesheet(href);
+    if (success) {
+      console.log('[Vendr Embed] Thema stylesheet geladen:', href);
+      return;
+    }
+
+    console.warn('[Vendr Embed] Kon stylesheet niet laden:', href);
+  }
+
+  console.warn('[Vendr Embed] Geen specifieke stylesheet gevonden voor deze makelaar, gebruik standaard.');
 }
