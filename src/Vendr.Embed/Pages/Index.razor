@@ -106,48 +106,60 @@ else
                     </MudStack>
                     <MudDivider />
 
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Primaire kleur</MudText>
-                        <MudColorPicker @bind-Color="PrimaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
-                    </MudStack>
+                    <MudTreeView ExpandOnClick="true">
+                        <MudTreeViewItem Text="Kleuren" @bind-Expanded="ColorsExpanded">
+                            <Content>
+                                <MudStack Spacing="0.75" Class="mt-2">
+                                    <MudStack Spacing="0.75">
+                                        <MudText Typo="Typo.caption" Class="font-semibold">Primaire kleur</MudText>
+                                        <MudColorPicker @bind-Color="PrimaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                                    </MudStack>
 
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Accentkleur</MudText>
-                        <MudColorPicker @bind-Color="SecondaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
-                    </MudStack>
+                                    <MudStack Spacing="0.75">
+                                        <MudText Typo="Typo.caption" Class="font-semibold">Accentkleur</MudText>
+                                        <MudColorPicker @bind-Color="SecondaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                                    </MudStack>
+                                </MudStack>
+                            </Content>
+                        </MudTreeViewItem>
 
-                    <MudDivider />
+                        <MudTreeViewItem Text="Typografie" @bind-Expanded="TypographyExpanded">
+                            <Content>
+                                <MudStack Spacing="0.75" Class="mt-2">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Lettertype</MudText>
+                                    <MudSelect T="string" @bind-Value="_selectedFontKey" Dense="true" DisableUnderLine="true">
+                                        @foreach (var option in _fontOptions)
+                                        {
+                                            <MudSelectItem Value="@option.Key">@option.Key</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudStack>
+                            </Content>
+                        </MudTreeViewItem>
 
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Lettertype</MudText>
-                        <MudSelect T="string" @bind-Value="_selectedFontKey" Dense="true" DisableUnderLine="true">
-                            @foreach (var option in _fontOptions)
-                            {
-                                <MudSelectItem Value="@option.Key">@option.Key</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudStack>
+                        <MudTreeViewItem Text="Kaartopmaak" @bind-Expanded="CardLayoutExpanded">
+                            <Content>
+                                <MudStack Spacing="0.75" Class="mt-2">
+                                    <MudStack Spacing="0.75">
+                                        <MudText Typo="Typo.caption" Class="font-semibold">Kaart-elevatie</MudText>
+                                        <MudSlider T="int" @bind-Value="_cardElevation" Min="0" Max="12" Step="1" Color="Color.Primary" ValueLabel="true" />
+                                    </MudStack>
 
-                    <MudDivider />
+                                    <MudStack Spacing="0.75">
+                                        <MudText Typo="Typo.caption" Class="font-semibold">Hoekradius</MudText>
+                                        <MudSlider T="int" @bind-Value="_cardCornerRadius" Min="0" Max="32" Step="2" Color="Color.Primary" ValueLabel="true" />
+                                    </MudStack>
 
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Kaart-elevatie</MudText>
-                        <MudSlider T="int" @bind-Value="_cardElevation" Min="0" Max="12" Step="1" Color="Color.Primary" ValueLabel="true" />
-                    </MudStack>
+                                    <MudStack Spacing="0.75">
+                                        <MudText Typo="Typo.caption" Class="font-semibold">Afbeelding hoogte</MudText>
+                                        <MudSlider T="int" @bind-Value="_cardImageHeight" Min="140" Max="260" Step="10" Color="Color.Primary" ValueLabel="true" />
+                                    </MudStack>
 
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Hoekradius</MudText>
-                        <MudSlider T="int" @bind-Value="_cardCornerRadius" Min="0" Max="32" Step="2" Color="Color.Primary" ValueLabel="true" />
-                    </MudStack>
-
-                    <MudStack Spacing="0.75">
-                        <MudText Typo="Typo.caption" Class="font-semibold">Afbeelding hoogte</MudText>
-                        <MudSlider T="int" @bind-Value="_cardImageHeight" Min="140" Max="260" Step="10" Color="Color.Primary" ValueLabel="true" />
-                    </MudStack>
-
-                    <MudDivider />
-
-                    <MudSwitch @bind-Checked="_cardOutlined" Color="Color.Primary" Label="Rand zichtbaar" />
+                                    <MudSwitch @bind-Checked="_cardOutlined" Color="Color.Primary" Label="Rand zichtbaar" />
+                                </MudStack>
+                            </Content>
+                        </MudTreeViewItem>
+                    </MudTreeView>
                 </MudStack>
             </MudPaper>
         </MudStack>
@@ -190,6 +202,7 @@ else
     private string? _error;
     private bool _loading = true;
     private RealtorMeta? _meta;
+    private StyleSection _expandedSection = StyleSection.None;
 
     private string PageHeading => _meta?.Name ?? "Vendr Embed";
 
@@ -445,6 +458,36 @@ else
         }
     }
 
+    private void SetExpandedSection(StyleSection section, bool expanded)
+    {
+        if (expanded)
+        {
+            _expandedSection = section;
+        }
+        else if (_expandedSection == section)
+        {
+            _expandedSection = StyleSection.None;
+        }
+    }
+
+    private bool ColorsExpanded
+    {
+        get => _expandedSection == StyleSection.Colors;
+        set => SetExpandedSection(StyleSection.Colors, value);
+    }
+
+    private bool TypographyExpanded
+    {
+        get => _expandedSection == StyleSection.Typography;
+        set => SetExpandedSection(StyleSection.Typography, value);
+    }
+
+    private bool CardLayoutExpanded
+    {
+        get => _expandedSection == StyleSection.CardLayout;
+        set => SetExpandedSection(StyleSection.CardLayout, value);
+    }
+
     private async Task ApplyCurrentPaletteAsync()
     {
         if (RootApp is null)
@@ -480,4 +523,12 @@ else
 
     private static readonly MudColor DefaultPrimaryColor = new("#005c77");
     private static readonly MudColor DefaultSecondaryColor = new("#2196f3");
+
+    private enum StyleSection
+    {
+        None,
+        Colors,
+        Typography,
+        CardLayout
+    }
 }
