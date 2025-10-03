@@ -10,6 +10,7 @@ const $status = document.getElementById('filterStatus');
 
 const $logo       = document.getElementById('realtorLogo');
 const $link       = document.getElementById('realtorLink');
+let $defaultThemeLink = document.getElementById('defaultThemeStylesheet');
 let $themeLink    = document.getElementById('themeStylesheet');
 const $stylePanel = document.querySelector('.style-panel');
 const $mainThemed = document.querySelector('main.container.themed');
@@ -75,9 +76,10 @@ function ensureOverrideStyles() {
   if (overrideStyleEl.parentNode) {
     overrideStyleEl.parentNode.removeChild(overrideStyleEl);
   }
-  const parent = $themeLink && $themeLink.parentNode ? $themeLink.parentNode : document.head;
-  if ($themeLink && $themeLink.nextSibling) {
-    parent.insertBefore(overrideStyleEl, $themeLink.nextSibling);
+  const anchor = $themeLink || $defaultThemeLink;
+  const parent = anchor && anchor.parentNode ? anchor.parentNode : document.head;
+  if (anchor && anchor.nextSibling) {
+    parent.insertBefore(overrideStyleEl, anchor.nextSibling);
   } else {
     parent.appendChild(overrideStyleEl);
   }
@@ -798,7 +800,12 @@ async function swapThemeStylesheet(href) {
     $themeLink = document.createElement('link');
     $themeLink.rel = 'stylesheet';
     $themeLink.id = 'themeStylesheet';
-    document.head.appendChild($themeLink);
+    const parent = $defaultThemeLink && $defaultThemeLink.parentNode ? $defaultThemeLink.parentNode : document.head;
+    if ($defaultThemeLink && $defaultThemeLink.nextSibling) {
+      parent.insertBefore($themeLink, $defaultThemeLink.nextSibling);
+    } else {
+      parent.appendChild($themeLink);
+    }
   }
 
   const previous = $themeLink.getAttribute('href');
@@ -836,54 +843,55 @@ async function swapThemeStylesheet(href) {
   });
 }
 
-async function applyThemeStylesheet(meta) {
-  const useDefault = async () => {
-    const success = await swapThemeStylesheet(DEFAULT_THEME_STYLESHEET);
-    if (success) {
-      await waitForStylesheet($themeLink);
-      ensureOverrideStyles();
+async function ensureDefaultThemeStylesheet() {
+  if (!$defaultThemeLink) {
+    $defaultThemeLink = document.createElement('link');
+    $defaultThemeLink.rel = 'stylesheet';
+    $defaultThemeLink.id = 'defaultThemeStylesheet';
+    if ($themeLink && $themeLink.parentNode) {
+      $themeLink.parentNode.insertBefore($defaultThemeLink, $themeLink);
+    } else {
+      document.head.appendChild($defaultThemeLink);
     }
-  };
+  }
+
+  const currentHref = $defaultThemeLink.getAttribute('href');
+  if (currentHref !== DEFAULT_THEME_STYLESHEET) {
+    $defaultThemeLink.setAttribute('href', DEFAULT_THEME_STYLESHEET);
+  }
+
+  await waitForStylesheet($defaultThemeLink);
+  return $defaultThemeLink;
+}
+
+async function applyThemeStylesheet(meta) {
+  await ensureDefaultThemeStylesheet();
 
   if (!meta) {
-    await useDefault();
+    if ($themeLink && $themeLink.parentNode) {
+      $themeLink.parentNode.removeChild($themeLink);
+    }
+    $themeLink = null;
+    ensureOverrideStyles();
     return;
   }
 
   const tried = new Set();
   const candidates = [];
   if (meta.stylesheet_local) {
-    candidates.push({ href: meta.stylesheet_local, checkContent: true });
+    candidates.push(meta.stylesheet_local);
   }
   if (meta.stylesheet_src) {
-    candidates.push({ href: meta.stylesheet_src, checkContent: false });
+    candidates.push(meta.stylesheet_src);
   }
 
   for (const candidate of candidates) {
-    const href = candidate.href;
+    const href = candidate;
     if (!href) continue;
 
     const absolute = new URL(href, location.href).href;
     if (tried.has(absolute)) continue;
     tried.add(absolute);
-
-    if (candidate.checkContent) {
-      try {
-        const response = await fetch(href, { cache: 'no-store' });
-        if (!response.ok) {
-          console.warn('[Vendr Embed] Kon stylesheet niet ophalen:', href, '→ HTTP', response.status);
-          continue;
-        }
-        const text = await response.text();
-        if (!text || !text.trim()) {
-          console.warn('[Vendr Embed] Stylesheet is leeg, gebruik fallback:', href);
-          continue;
-        }
-      } catch (e) {
-        console.warn('[Vendr Embed] Fout bij lezen stylesheet:', href, e?.message || e);
-        continue;
-      }
-    }
 
     const success = await swapThemeStylesheet(href);
     if (success) {
@@ -896,6 +904,10 @@ async function applyThemeStylesheet(meta) {
     console.warn('[Vendr Embed] Kon stylesheet niet laden:', href);
   }
 
+  if ($themeLink && $themeLink.parentNode) {
+    $themeLink.parentNode.removeChild($themeLink);
+  }
+  $themeLink = null;
   console.warn('[Vendr Embed] Geen specifieke stylesheet gevonden, gebruik standaard.');
-  await useDefault();
+  ensureOverrideStyles();
 }
