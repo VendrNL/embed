@@ -285,7 +285,7 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   border-radius: var(--badge-radius, 4px);
   font-weight: 700;
   font-size: 12px;
-  background: var(--badge-color, #22c55e);
+  background: var(--badge-color, #ff0000);
   color: var(--badge-text, #052e16);
   font-family: var(--font-label, var(--font-body));
   z-index: 0;
