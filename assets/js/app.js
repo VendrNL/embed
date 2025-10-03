@@ -14,6 +14,49 @@ let $themeLink    = document.getElementById('themeStylesheet');
 const $stylePanel = document.querySelector('.style-panel');
 const $mainThemed = document.querySelector('main.container.themed');
 
+const DEFAULT_THEME_STYLESHEET = 'assets/css/themes/default.css';
+const OVERRIDE_STYLES = `
+main.container.themed .card {
+  box-shadow: var(--card-shadow, none);
+  aspect-ratio: var(--card-aspect, 7 / 8);
+}
+main.container.themed .card .media {
+  padding-top: var(--media-ratio, 58%);
+}
+main.container.themed .card .media .badge {
+  left: var(--badge-offset, 12px);
+  top: var(--badge-offset, 12px);
+  padding: calc(var(--badge-padding, 10px) * 0.6) var(--badge-padding, 10px);
+  border-radius: var(--badge-radius, 4px);
+  background: var(--badge-color, #22c55e);
+  color: var(--badge-text, #052e16) !important;
+  font-family: var(--font-label, var(--font-body, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial));
+}
+main.container.themed .card .body {
+  font-family: var(--font-body, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial);
+}
+main.container.themed .card .body .name {
+  color: var(--title-color, #0f172a) !important;
+  font-family: var(--font-heading, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial);
+}
+main.container.themed .card .body .addr,
+main.container.themed .card .body .meta {
+  color: var(--general-text, var(--muted, #475569)) !important;
+}
+main.container.themed .card .actions {
+  padding: calc(var(--button-offset, 16px) * 0.75) var(--button-offset, 16px);
+}
+main.container.themed .card .actions .btn {
+  padding: calc(var(--button-padding, 14px) * 0.7) var(--button-padding, 14px);
+  border-radius: var(--button-radius, 40px);
+  box-shadow: var(--button-shadow, none);
+  color: var(--button-text, #ffffff) !important;
+  font-family: var(--font-button, var(--font-body, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial));
+  background: var(--accent, #2563eb);
+}
+`;
+let overrideStyleEl = null;
+
 const params = new URLSearchParams(location.search);
 const realtorKey = (params.get('realtor') || '').trim().toLowerCase();
 const overrideFeed = params.get('feed')?.trim();
@@ -21,6 +64,25 @@ const overrideFeed = params.get('feed')?.trim();
 let RAW = [];
 let FILTERED = [];
 let CURRENT_MEDIA_RATIO = null;
+
+function ensureOverrideStyles() {
+  if (!$mainThemed) return null;
+  if (!overrideStyleEl) {
+    overrideStyleEl = document.getElementById('themeStyleOverrides') || document.createElement('style');
+    overrideStyleEl.id = 'themeStyleOverrides';
+  }
+  overrideStyleEl.textContent = OVERRIDE_STYLES;
+  if (overrideStyleEl.parentNode) {
+    overrideStyleEl.parentNode.removeChild(overrideStyleEl);
+  }
+  const parent = $themeLink && $themeLink.parentNode ? $themeLink.parentNode : document.head;
+  if ($themeLink && $themeLink.nextSibling) {
+    parent.insertBefore(overrideStyleEl, $themeLink.nextSibling);
+  } else {
+    parent.appendChild(overrideStyleEl);
+  }
+  return overrideStyleEl;
+}
 
 function showError(msg) {
   if (!$alert) return;
@@ -265,23 +327,61 @@ function initColorInputs(main, form) {
     }
 
     const fallback = input.dataset.defaultColor;
-    const current = normalizeCssColor(computed.getPropertyValue(props[0]).trim()) || fallback;
-    if (current) input.value = current;
+    let current = null;
+
+    for (const prop of props) {
+      const raw = (computed.getPropertyValue(prop) || '').trim();
+      if (!raw) continue;
+      const normalized = normalizeCssColor(raw);
+      if (normalized) {
+        current = normalized;
+        break;
+      }
+    }
+
+    if (!current) {
+      const selector = input.dataset.sampleSelector;
+      const sampleProp = input.dataset.sampleProp || 'color';
+      if (selector) {
+        const sampleNode = document.querySelector(selector);
+        if (sampleNode) {
+          try {
+            const sampleStyle = getComputedStyle(sampleNode);
+            const raw = (sampleStyle.getPropertyValue(sampleProp) || '').trim();
+            const normalized = normalizeCssColor(raw);
+            if (normalized) {
+              current = normalized;
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+    }
+
+    if (!current) current = fallback;
+    if (current) {
+      input.value = current;
+      input.dataset.currentColor = current;
+      props.forEach(prop => {
+        if (prop.startsWith('--')) {
+          main.style.setProperty(prop, current);
+        }
+        document.documentElement.style.setProperty(prop, current);
+      });
+    }
 
     if (input.dataset.colorInit !== '1') {
       input.dataset.colorInit = '1';
       input.addEventListener('input', () => {
-        const val = input.value;
+        const value = input.value;
+        input.dataset.currentColor = value;
         props.forEach(prop => {
-          main.style.setProperty(prop, val);
-          document.documentElement.style.setProperty(prop, val);
+          if (prop.startsWith('--')) {
+            main.style.setProperty(prop, value);
+          }
+          document.documentElement.style.setProperty(prop, value);
         });
-        if (props.includes('--accent')) {
-          document.documentElement.style.setProperty('--accent', val);
-        }
-        if (props.includes('--border')) {
-          document.documentElement.style.setProperty('--border', val);
-        }
       });
     }
   });
@@ -293,17 +393,43 @@ function initRangeInputs(main, form) {
     const prop = input.dataset.cssProp;
     if (!prop) return;
     const unit = input.dataset.unit || '';
-    const current = computed.getPropertyValue(prop).trim();
+    let current = (computed.getPropertyValue(prop) || '').trim();
+
+    if (!current) {
+      const selector = input.dataset.sampleSelector;
+      const sampleProp = input.dataset.sampleProp;
+      if (selector && sampleProp) {
+        const sampleNode = document.querySelector(selector);
+        if (sampleNode) {
+          try {
+            const sampleStyle = getComputedStyle(sampleNode);
+            const raw = (sampleStyle.getPropertyValue(sampleProp) || '').trim();
+            if (raw) {
+              current = raw;
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+    }
+
     if (current) {
       const numeric = parseFloat(current);
       if (!Number.isNaN(numeric)) {
         input.value = String(numeric);
       }
+      main.style.setProperty(prop, current);
+      document.documentElement.style.setProperty(prop, current);
+    } else if (input.value) {
+      const valueWithUnit = unit ? input.value + unit : input.value;
+      main.style.setProperty(prop, valueWithUnit);
+      document.documentElement.style.setProperty(prop, valueWithUnit);
+      current = valueWithUnit;
     }
 
-    const ratioValue = current || (input.value ? input.value + unit : '');
-    if (prop === '--media-ratio' && ratioValue) {
-      applyMediaRatioToCards(ratioValue);
+    if (prop === '--media-ratio' && current) {
+      applyMediaRatioToCards(current);
     }
 
     if (input.dataset.rangeInit !== '1') {
@@ -324,30 +450,174 @@ function initElevation(main, form) {
   const slider = form.querySelector('input[type="range"][data-elevation]');
   if (!slider) return;
 
-  const computed = getComputedStyle(main).getPropertyValue('--card-shadow').trim();
+  let computed = getComputedStyle(main).getPropertyValue('--card-shadow').trim();
+  if (!computed || computed === 'none') {
+    const card = document.querySelector('.grid .card');
+    if (card) {
+      try {
+        const cardShadow = (getComputedStyle(card).boxShadow || '').trim();
+        if (cardShadow && cardShadow !== 'none') {
+          computed = cardShadow;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+
   if (computed && computed !== 'none') {
     const match = computed.match(/0\s+(\d+(?:\.\d+)?)px/i);
     if (match) {
-      slider.value = String(Math.round(Number(match[1])));
+      const y = Number(match[1]);
+      const derived = Math.max(0, Math.round((y - 2) / 1.5));
+      slider.value = String(derived);
     }
+  }
+  if (!computed || computed === 'none') {
+    slider.value = '0';
   }
 
   const applyElevation = (level) => {
     const amount = Math.max(0, Number(level) || 0);
     if (amount === 0) {
       main.style.setProperty('--card-shadow', 'none');
+      document.documentElement.style.setProperty('--card-shadow', 'none');
       return;
     }
-    const blur = Math.round(amount * 3);
-    const spread = Math.round(amount * 0.5);
-    const shadow = `0 ${amount}px ${blur}px ${spread ? spread + 'px' : '0'} rgba(15,23,42,0.15)`;
+    const offset = Math.round(amount * 1.5 + 2);
+    const blur = Math.round(amount * 4 + 6);
+    const spread = Math.round(amount * 0.6);
+    const opacity = Math.min(0.18 + amount * 0.02, 0.45).toFixed(2);
+    const shadow = `0 ${offset}px ${blur}px ${spread ? spread + 'px' : '0'} rgba(15,23,42,${opacity})`;
     main.style.setProperty('--card-shadow', shadow);
+    document.documentElement.style.setProperty('--card-shadow', shadow);
   };
 
   applyElevation(slider.value);
   if (slider.dataset.elevationInit !== '1') {
     slider.dataset.elevationInit = '1';
     slider.addEventListener('input', () => applyElevation(slider.value));
+  }
+}
+
+function initButtonShadow(main, form) {
+  const slider = form.querySelector('input[type="range"][data-button-shadow]');
+  if (!slider) return;
+
+  let computed = getComputedStyle(main).getPropertyValue('--button-shadow').trim();
+  if (!computed || computed === 'none') {
+    const button = document.querySelector('.grid .card .actions .btn');
+    if (button) {
+      try {
+        const shadow = (getComputedStyle(button).boxShadow || '').trim();
+        if (shadow && shadow !== 'none') {
+          computed = shadow;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+
+  if (computed && computed !== 'none') {
+    const match = computed.match(/0\s+(\d+(?:\.\d+)?)px/i);
+    if (match) {
+      const y = Number(match[1]);
+      const derived = Math.max(0, Math.round((y - 1) / 1.2));
+      slider.value = String(derived);
+    }
+  }
+  if (!computed || computed === 'none') {
+    slider.value = '0';
+  }
+
+  const applyShadow = (level) => {
+    const amount = Math.max(0, Number(level) || 0);
+    if (amount === 0) {
+      main.style.setProperty('--button-shadow', 'none');
+      document.documentElement.style.setProperty('--button-shadow', 'none');
+      return;
+    }
+    const offset = Math.round(amount * 1.2 + 1);
+    const blur = Math.round(amount * 3 + 6);
+    const spread = Math.round(amount * 0.4);
+    const opacity = Math.min(0.15 + amount * 0.02, 0.4).toFixed(2);
+    const shadow = `0 ${offset}px ${blur}px ${spread ? spread + 'px' : '0'} rgba(15,23,42,${opacity})`;
+    main.style.setProperty('--button-shadow', shadow);
+    document.documentElement.style.setProperty('--button-shadow', shadow);
+  };
+
+  applyShadow(slider.value);
+  if (slider.dataset.buttonShadowInit !== '1') {
+    slider.dataset.buttonShadowInit = '1';
+    slider.addEventListener('input', () => applyShadow(slider.value));
+  }
+}
+
+function initAspectSelect(main, form) {
+  const select = form.querySelector('select[data-aspect-select]');
+  if (!select) return;
+
+  const applyAspect = (value) => {
+    if (!value) return;
+    main.style.setProperty('--card-aspect', value);
+    document.documentElement.style.setProperty('--card-aspect', value);
+  };
+
+  const normalizeAspect = (value) => {
+    if (!value) return '';
+    const trimmed = value.trim();
+    if (/^\d+\s*\/\s*\d+$/.test(trimmed)) {
+      const parts = trimmed.split('/').map(part => part.trim());
+      return `${parts[0]} / ${parts[1]}`;
+    }
+    const numeric = Number.parseFloat(trimmed);
+    if (!Number.isFinite(numeric) || numeric <= 0) return '';
+    const ratios = ['2 / 3', '3 / 4', '5 / 7', '7 / 8'];
+    let best = ratios[ratios.length - 1];
+    let diff = Number.POSITIVE_INFINITY;
+    ratios.forEach(ratio => {
+      const [a, b] = ratio.split('/').map(part => Number(part.trim()));
+      if (!a || !b) return;
+      const valueRatio = a / b;
+      const delta = Math.abs(valueRatio - numeric);
+      if (delta < diff) {
+        diff = delta;
+        best = ratio;
+      }
+    });
+    return best;
+  };
+
+  let current = (getComputedStyle(main).getPropertyValue('--card-aspect') || '').trim();
+  if (!current) {
+    const card = document.querySelector('.grid .card');
+    if (card) {
+      try {
+        const inline = card.style.aspectRatio;
+        const computedAspect = inline || (getComputedStyle(card).aspectRatio || '').trim();
+        if (computedAspect) {
+          current = computedAspect;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+
+  if (current) {
+    const normalized = normalizeAspect(current);
+    if (normalized) {
+      select.value = normalized;
+      applyAspect(normalized);
+    }
+  } else if (select.value) {
+    applyAspect(select.value);
+  }
+
+  if (select.dataset.aspectInit !== '1') {
+    select.dataset.aspectInit = '1';
+    select.addEventListener('change', () => applyAspect(select.value));
   }
 }
 
@@ -373,12 +643,39 @@ function initFontSelects(main, form) {
   const computed = getComputedStyle(document.documentElement);
 
   form.querySelectorAll('select[data-font-target]').forEach(select => {
-    const target = select.dataset.fontTarget;
-    const cssVar = target === 'heading' ? '--font-heading' : '--font-body';
-    const current = (computed.getPropertyValue(cssVar) || '').trim().toLowerCase();
-    const match = Object.entries(FONT_MAP).find(([, stack]) => stack.toLowerCase() === current);
-    if (match) {
-      select.value = match[0];
+    const target = select.dataset.fontTarget || 'body';
+    const cssVar = target === 'heading'
+      ? '--font-heading'
+      : target === 'label'
+        ? '--font-label'
+        : target === 'button'
+          ? '--font-button'
+          : '--font-body';
+
+    let currentValue = (computed.getPropertyValue(cssVar) || '').trim();
+    if (!currentValue && select.dataset.fontSelector) {
+      const node = document.querySelector(select.dataset.fontSelector);
+      if (node) {
+        try {
+          currentValue = (getComputedStyle(node).fontFamily || '').trim();
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+
+    if (currentValue) {
+      const normalized = currentValue.toLowerCase();
+      const match = Object.entries(FONT_MAP).find(([, stack]) => stack.toLowerCase() === normalized);
+      if (match) {
+        select.value = match[0];
+        currentValue = FONT_MAP[match[0]];
+      }
+      rootStyle.setProperty(cssVar, currentValue);
+      main.style.setProperty(cssVar, currentValue);
+      if (target === 'body') {
+        document.body.style.fontFamily = currentValue;
+      }
     }
 
     if (select.dataset.fontInit !== '1') {
@@ -388,10 +685,10 @@ function initFontSelects(main, form) {
         const stack = FONT_MAP[key];
         if (!stack) return;
         rootStyle.setProperty(cssVar, stack);
+        main.style.setProperty(cssVar, stack);
         if (target === 'body') {
           document.body.style.fontFamily = stack;
         }
-        main.style.setProperty(cssVar, stack);
       });
     }
   });
@@ -402,11 +699,14 @@ function initStylePanel() {
   const form = document.querySelector('.style-panel__form');
   if (!form) return;
 
+  ensureOverrideStyles();
   ensureStylePanelVisible();
 
   initColorInputs($mainThemed, form);
   initRangeInputs($mainThemed, form);
+  initAspectSelect($mainThemed, form);
   initElevation($mainThemed, form);
+  initButtonShadow($mainThemed, form);
   initOutline($mainThemed, form);
   initFontSelects($mainThemed, form);
 
@@ -537,21 +837,58 @@ async function swapThemeStylesheet(href) {
 }
 
 async function applyThemeStylesheet(meta) {
-  if (!meta) return;
+  const useDefault = async () => {
+    const success = await swapThemeStylesheet(DEFAULT_THEME_STYLESHEET);
+    if (success) {
+      await waitForStylesheet($themeLink);
+      ensureOverrideStyles();
+    }
+  };
+
+  if (!meta) {
+    await useDefault();
+    return;
+  }
 
   const tried = new Set();
   const candidates = [];
-  if (meta.stylesheet_local) candidates.push(meta.stylesheet_local);
-  if (meta.stylesheet_src) candidates.push(meta.stylesheet_src);
+  if (meta.stylesheet_local) {
+    candidates.push({ href: meta.stylesheet_local, checkContent: true });
+  }
+  if (meta.stylesheet_src) {
+    candidates.push({ href: meta.stylesheet_src, checkContent: false });
+  }
 
-  for (const href of candidates) {
+  for (const candidate of candidates) {
+    const href = candidate.href;
     if (!href) continue;
+
     const absolute = new URL(href, location.href).href;
     if (tried.has(absolute)) continue;
     tried.add(absolute);
 
+    if (candidate.checkContent) {
+      try {
+        const response = await fetch(href, { cache: 'no-store' });
+        if (!response.ok) {
+          console.warn('[Vendr Embed] Kon stylesheet niet ophalen:', href, '→ HTTP', response.status);
+          continue;
+        }
+        const text = await response.text();
+        if (!text || !text.trim()) {
+          console.warn('[Vendr Embed] Stylesheet is leeg, gebruik fallback:', href);
+          continue;
+        }
+      } catch (e) {
+        console.warn('[Vendr Embed] Fout bij lezen stylesheet:', href, e?.message || e);
+        continue;
+      }
+    }
+
     const success = await swapThemeStylesheet(href);
     if (success) {
+      await waitForStylesheet($themeLink);
+      ensureOverrideStyles();
       console.log('[Vendr Embed] Thema stylesheet geladen:', href);
       return;
     }
@@ -559,5 +896,6 @@ async function applyThemeStylesheet(meta) {
     console.warn('[Vendr Embed] Kon stylesheet niet laden:', href);
   }
 
-  console.warn('[Vendr Embed] Geen specifieke stylesheet gevonden voor deze makelaar, gebruik standaard.');
+  console.warn('[Vendr Embed] Geen specifieke stylesheet gevonden, gebruik standaard.');
+  await useDefault();
 }
