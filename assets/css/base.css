@@ -4,7 +4,7 @@
   --text: #0f172a;
   --muted: #475569;
   --bg: #f7fafc;
-  --accent: #2563eb;
+  --accent: #ff0000;
   --sold: #111827;
   --warn: #f59e0b;
 }
@@ -28,8 +28,8 @@ main.container.themed {
   --badge-padding: 10px;
   --badge-offset: 12px;
   --badge-radius: 4px;
-  --badge-text: #052e16;
-  --badge-color: #22c55e;
+  --badge-text: #ffffff;
+  --badge-color: #ff0000;
   --button-padding: 14px;
   --button-offset: 16px;
   --button-radius: 40px;
