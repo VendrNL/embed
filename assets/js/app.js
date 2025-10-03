@@ -11,6 +11,7 @@ const $status = document.getElementById('filterStatus');
 const $logo       = document.getElementById('realtorLogo');
 const $link       = document.getElementById('realtorLink');
 let $themeLink    = document.getElementById('themeStylesheet');
+let $defaultThemeLink = document.getElementById('defaultThemeStylesheet');
 const $stylePanel = document.querySelector('.style-panel');
 const $mainThemed = document.querySelector('main.container.themed');
 
@@ -82,6 +83,30 @@ function ensureOverrideStyles() {
     parent.appendChild(overrideStyleEl);
   }
   return overrideStyleEl;
+}
+
+async function ensureDefaultThemeStylesheet() {
+  if (!$defaultThemeLink) {
+    $defaultThemeLink = document.createElement('link');
+    $defaultThemeLink.rel = 'stylesheet';
+    $defaultThemeLink.id = 'defaultThemeStylesheet';
+    if ($themeLink && $themeLink.parentNode) {
+      $themeLink.parentNode.insertBefore($defaultThemeLink, $themeLink);
+    } else {
+      document.head.appendChild($defaultThemeLink);
+    }
+  }
+
+  const currentHref = $defaultThemeLink.getAttribute('href');
+  const absoluteCurrent = currentHref ? new URL(currentHref, location.href).href : null;
+  const absoluteTarget = new URL(DEFAULT_THEME_STYLESHEET, location.href).href;
+
+  if (absoluteCurrent !== absoluteTarget) {
+    $defaultThemeLink.setAttribute('href', DEFAULT_THEME_STYLESHEET);
+  }
+
+  await waitForStylesheet($defaultThemeLink);
+  return $defaultThemeLink;
 }
 
 function showError(msg) {
@@ -845,6 +870,7 @@ function isStylesheetEmpty(text) {
 
 async function applyThemeStylesheet(meta) {
   const useDefault = async () => {
+    await ensureDefaultThemeStylesheet();
     const success = await swapThemeStylesheet(DEFAULT_THEME_STYLESHEET);
     if (success) {
       await waitForStylesheet($themeLink);
@@ -894,6 +920,10 @@ async function applyThemeStylesheet(meta) {
 
     const success = await swapThemeStylesheet(href);
     if (success) {
+      if ($defaultThemeLink && $defaultThemeLink.parentNode) {
+        $defaultThemeLink.parentNode.removeChild($defaultThemeLink);
+        $defaultThemeLink = null;
+      }
       await waitForStylesheet($themeLink);
       ensureOverrideStyles();
       console.log('[Vendr Embed] Thema stylesheet geladen:', href);
