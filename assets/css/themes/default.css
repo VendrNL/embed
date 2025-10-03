@@ -11,7 +11,7 @@ main.container.themed {
   --c-bg:           #f7fafc;  /* kleur achtergrond van de pagina */
   --c-card:         #ffffff;  /* achtergrond van de card */
   --c-border:       #e6edf2;  /* kleur card rand */
-  --c-pill:         #161670;  /* kleur pill */
+  --c-pill:         #ff0000;  /* kleur pill */
   --c-primary:      #161670;  /* kleur van de titel van het project */
   --c-text:         #232323;  /* kleur standaard tekst */
   --c-addr:         #232323;  /* kleur tekst adres */
