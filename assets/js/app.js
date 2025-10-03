@@ -16,6 +16,14 @@ const $stylePanel = document.querySelector('.style-panel');
 const $mainThemed = document.querySelector('main.container.themed');
 
 const DEFAULT_THEME_STYLESHEET = 'assets/css/themes/default.css';
+
+function isStylesheetEmpty(text) {
+  if (typeof text !== 'string') return true;
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .trim()
+    .length === 0;
+}
 const OVERRIDE_STYLES = `
 main.container.themed .card {
   box-shadow: var(--card-shadow, none);
@@ -879,19 +887,42 @@ async function applyThemeStylesheet(meta) {
   const tried = new Set();
   const candidates = [];
   if (meta.stylesheet_local) {
-    candidates.push(meta.stylesheet_local);
+    candidates.push({ href: meta.stylesheet_local, checkContent: true });
   }
   if (meta.stylesheet_src) {
-    candidates.push(meta.stylesheet_src);
+    candidates.push({ href: meta.stylesheet_src, checkContent: false });
   }
 
   for (const candidate of candidates) {
-    const href = candidate;
+    const href = candidate && candidate.href ? candidate.href : candidate;
     if (!href) continue;
 
-    const absolute = new URL(href, location.href).href;
+    const absoluteUrl = new URL(href, location.href);
+    const absolute = absoluteUrl.href;
     if (tried.has(absolute)) continue;
     tried.add(absolute);
+
+    const shouldCheck = candidate && typeof candidate === 'object' && 'checkContent' in candidate
+      ? !!candidate.checkContent
+      : absoluteUrl.origin === location.origin;
+
+    if (shouldCheck) {
+      try {
+        const response = await fetch(href, { cache: 'no-store' });
+        if (!response.ok) {
+          console.warn('[Vendr Embed] Kon stylesheet niet ophalen:', href, '→ HTTP', response.status);
+          continue;
+        }
+        const text = await response.text();
+        if (isStylesheetEmpty(text)) {
+          console.warn('[Vendr Embed] Stylesheet is leeg, gebruik fallback:', href);
+          continue;
+        }
+      } catch (e) {
+        console.warn('[Vendr Embed] Fout bij lezen stylesheet:', href, e?.message || e);
+        continue;
+      }
+    }
 
     const success = await swapThemeStylesheet(href);
     if (success) {
