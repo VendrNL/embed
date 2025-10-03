@@ -836,6 +836,13 @@ async function swapThemeStylesheet(href) {
   });
 }
 
+function isStylesheetEmpty(text) {
+  if (!text) return true;
+  const withoutComments = text.replace(/\/\*[\s\S]*?\*\//g, '');
+  const normalized = withoutComments.trim();
+  return normalized.length === 0;
+}
+
 async function applyThemeStylesheet(meta) {
   const useDefault = async () => {
     const success = await swapThemeStylesheet(DEFAULT_THEME_STYLESHEET);
@@ -875,7 +882,7 @@ async function applyThemeStylesheet(meta) {
           continue;
         }
         const text = await response.text();
-        if (!text || !text.trim()) {
+        if (isStylesheetEmpty(text)) {
           console.warn('[Vendr Embed] Stylesheet is leeg, gebruik fallback:', href);
           continue;
         }
