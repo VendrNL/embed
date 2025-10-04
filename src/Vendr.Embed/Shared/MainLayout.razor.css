@@ -45,7 +45,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: min(500px, 30vw);
+    width: min(500px, 40vw);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     pointer-events: none;
