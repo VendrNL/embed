@@ -174,9 +174,26 @@ main.container.themed > .hamburger {
   color: #1f2937;
 }
 
+.style-panel__toggle span {
+  justify-self: start;
+}
+
 .style-panel__toggle input {
   width: 18px;
   height: 18px;
+}
+
+@media (min-width: 640px) {
+  .style-panel__toggle {
+    display: grid;
+    grid-template-columns: var(--style-panel-label-width) auto;
+    column-gap: 16px;
+    align-items: center;
+  }
+
+  .style-panel__toggle input {
+    justify-self: start;
+  }
 }
 
 @media (max-width: 1024px) {
