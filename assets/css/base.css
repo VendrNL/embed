@@ -187,6 +187,7 @@ main.container.themed > .hamburger {
   .style-panel__toggle {
     display: grid;
     grid-template-columns: var(--style-panel-label-width) 1fr;
+    grid-template-columns: var(--style-panel-label-width) auto;
     column-gap: 16px;
     align-items: center;
   }
