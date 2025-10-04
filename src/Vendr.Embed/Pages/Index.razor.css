@@ -61,14 +61,16 @@
 }
 
 .style-sidenav {
-    height: 100%;
+    height: auto;
     width: 0;
-    position: fixed;
+    position: absolute;
     z-index: 1200;
     top: 0;
+    bottom: 0;
     left: 0;
     background-color: var(--mud-palette-background, #111);
     overflow-x: hidden;
+    overflow-y: auto;
     transition: width 0.3s ease;
     padding-top: 64px;
     display: flex;
@@ -76,7 +78,7 @@
 }
 
 .style-sidenav.open {
-    width: min(360px, 90vw);
+    width: min(360px, 90%);
 }
 
 .style-sidenav .closebtn {
@@ -120,7 +122,7 @@
 }
 
 .style-sidenav-backdrop {
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 1100;
