@@ -25,23 +25,25 @@
     </MudAppBar>
 
     <MudMainContent>
-        <MudContainer Class="py-6" MaxWidth="MaxWidth.False">
-            <CascadingValue Value="this">
-                @Body
-            </CascadingValue>
-        </MudContainer>
+        <div class="main-container-themed">
+            <MudContainer Class="py-6" MaxWidth="MaxWidth.False">
+                <CascadingValue Value="this">
+                    @Body
+                </CascadingValue>
+            </MudContainer>
+
+            <div class="side-menu-backdrop @(_sideMenuOpen ? "visible" : string.Empty)" @onclick="CloseSideMenu"></div>
+
+            <nav class="side-menu @(_sideMenuOpen ? "open" : string.Empty)" aria-label="Hoofdmenu" aria-hidden="@(!_sideMenuOpen ? "true" : "false")">
+                <button type="button" class="closebtn" @onclick="CloseSideMenu" aria-label="Menu sluiten">&times;</button>
+                <a href="#over">Over</a>
+                <a href="#diensten">Diensten</a>
+                <a href="#klanten">Klanten</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
     </MudMainContent>
 </MudLayout>
-
-<div class="side-menu-backdrop @(_sideMenuOpen ? "visible" : string.Empty)" @onclick="CloseSideMenu"></div>
-
-<nav class="side-menu @(_sideMenuOpen ? "open" : string.Empty)" aria-label="Hoofdmenu" aria-hidden="@(!_sideMenuOpen ? "true" : "false")">
-    <button type="button" class="closebtn" @onclick="CloseSideMenu" aria-label="Menu sluiten">&times;</button>
-    <a href="#over">Over</a>
-    <a href="#diensten">Diensten</a>
-    <a href="#klanten">Klanten</a>
-    <a href="#contact">Contact</a>
-</nav>
 
 @code {
     private RenderFragment? _headerContent;

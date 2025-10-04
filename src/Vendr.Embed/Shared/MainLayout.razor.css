@@ -1,3 +1,15 @@
+.main-container-themed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.main-container-themed > .mud-container {
+    position: relative;
+    z-index: 0;
+}
+
 .appbar-container {
     display: flex;
     align-items: center;
@@ -17,23 +29,26 @@
 }
 
 .side-menu {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1500;
+    position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
+    z-index: 20;
     background-color: #111;
     overflow-x: hidden;
-    transition: width 0.3s ease;
-    padding-top: 64px;
+    padding: 64px 0 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: min(260px, 100%);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    pointer-events: none;
 }
 
 .side-menu.open {
-    width: min(260px, 80vw);
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .side-menu a {
@@ -63,10 +78,10 @@
 }
 
 .side-menu-backdrop {
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
-    z-index: 1400;
+    z-index: 10;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
