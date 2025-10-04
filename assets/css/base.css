@@ -73,6 +73,7 @@ main.container.themed > .hamburger {
   align-self: start;
   background: #fff;
   border: 1px solid var(--border);
+  border-width: 0;
   border-radius: 12px;
   padding: 20px 20px 24px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
@@ -94,8 +95,7 @@ main.container.themed > .hamburger {
 }
 
 .style-panel__form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 20px;
 }
 
@@ -128,6 +128,10 @@ main.container.themed > .hamburger {
   color: #1f2937;
 }
 
+.style-panel__field span {
+  align-self: center;
+}
+
 .style-panel__field input[type="color"] {
   width: 100%;
   height: 36px;
@@ -148,6 +152,17 @@ main.container.themed > .hamburger {
   border: 1px solid var(--border);
   background: #fff;
   font: 0.9rem/1.4 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+}
+
+@media (min-width: 640px) {
+  .style-panel__field {
+    grid-template-columns: auto 1fr;
+    column-gap: 16px;
+  }
+
+  .style-panel__field span {
+    justify-self: start;
+  }
 }
 
 .style-panel__toggle {
