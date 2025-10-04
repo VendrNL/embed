@@ -216,6 +216,17 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   border-radius: 999px;
 }
 
+body.has-menu-open {
+  overflow: hidden;
+}
+
+.header-menu__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  z-index: 3995;
+}
+
 .brand img {
   height: 40px;
   display: block;
@@ -301,6 +312,35 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
 
   .header-menu__link {
     padding: 8px 10px;
+  }
+
+  .header-menu__backdrop {
+    display: none;
+  }
+}
+
+@media (max-width: 959.98px) {
+  .header-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(320px, 85vw);
+    padding: 88px 24px 24px;
+    overflow-y: auto;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    box-shadow: 18px 0 32px rgba(15, 23, 42, 0.16);
+    z-index: 4001;
+  }
+
+  .header-menu__inner {
+    padding: 0;
+  }
+
+  .header-menu__list {
+    padding-top: 0;
+    gap: 10px;
   }
 }
 
