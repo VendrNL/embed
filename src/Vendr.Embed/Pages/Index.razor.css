@@ -47,6 +47,10 @@
     font-weight: 600;
 }
 
+.page-menu-trigger {
+    align-self: flex-start;
+}
+
 
 .main-toolbar {
     gap: 1rem;

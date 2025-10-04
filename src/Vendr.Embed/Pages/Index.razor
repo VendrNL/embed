@@ -21,6 +21,18 @@ else if (!string.IsNullOrEmpty(_error))
 else
 {
     <MudStack Spacing="3">
+        @if (Layout is not null)
+        {
+            <MudTooltip Text="Hoofdmenu openen">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                               Color="Color.Primary"
+                               Size="Size.Medium"
+                               Class="page-menu-trigger"
+                               AriaLabel="Hoofdmenu openen"
+                               OnClick="OpenHamburgerMenu" />
+            </MudTooltip>
+        }
+
         <MudStack Row="true" AlignItems="AlignItems.Stretch" Spacing="2" Class="layout-root">
             <MudPaper Class="@($"filters-panel pa-4{(_filtersCollapsed ? " collapsed" : string.Empty)}")" Elevation="1">
                 <MudStack Spacing="1.5">
@@ -457,6 +469,11 @@ else
             _secondaryColor = value;
             _ = ApplyCurrentPaletteAsync();
         }
+    }
+
+    private void OpenHamburgerMenu()
+    {
+        Layout?.OpenSideMenu();
     }
 
     private void ToggleFilters()
