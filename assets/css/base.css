@@ -245,6 +245,65 @@ header, .header--neutral, .header-bar { transform: translateZ(0); }
   font: 0.9em 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
+.header-menu {
+  border-top: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.header-menu__inner {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+
+.header-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header-menu__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #0f172a;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-menu__link:hover,
+.header-menu__link:focus {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--accent);
+  outline: none;
+}
+
+.header--neutral.menu-open .hamburger {
+  border-color: rgba(37, 99, 235, 0.4);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.header--neutral.menu-open .hamburger span {
+  background: var(--accent);
+}
+
+@media (min-width: 960px) {
+  .header-menu__list {
+    flex-direction: row;
+    padding: 16px 0;
+  }
+
+  .header-menu__link {
+    padding: 8px 10px;
+  }
+}
+
 /* Alerts & Stats */
 .alert {
   border: 1px solid #7f1d1d;
