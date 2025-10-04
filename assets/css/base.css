@@ -97,6 +97,7 @@ main.container.themed > .hamburger {
 .style-panel__form {
   display: grid;
   gap: 20px;
+  --style-panel-label-width: 170px;
 }
 
 .style-panel,
@@ -156,7 +157,7 @@ main.container.themed > .hamburger {
 
 @media (min-width: 640px) {
   .style-panel__field {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: var(--style-panel-label-width) 1fr;
     column-gap: 16px;
   }
 
