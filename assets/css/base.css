@@ -275,8 +275,8 @@ body.has-menu-open {
 }
 
 .header-menu.open {
-  width: 300px;
-  max-width: 30%;
+  width: 600px;
+  max-width: 40%;
   box-shadow: 18px 0 32px rgba(15, 23, 42, 0.25);
   pointer-events: auto;
 }
