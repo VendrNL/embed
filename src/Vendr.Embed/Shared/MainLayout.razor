@@ -2,15 +2,25 @@
 
 <MudLayout>
     <MudAppBar Elevation="0" Color="Color.Primary" Dense="true" DisableShrink="true">
-        <MudContainer Class="d-flex align-center justify-space-between" MaxWidth="MaxWidth.False">
-            @if (_headerContent is not null)
-            {
-                @_headerContent
-            }
-            else
-            {
-                <MudText Typo="Typo.h6">Vendr Embed</MudText>
-            }
+        <MudContainer Class="appbar-container" MaxWidth="MaxWidth.False">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           Class="side-menu-trigger"
+                           AriaLabel="Menu openen"
+                           AriaExpanded="@(_sideMenuOpen ? "true" : "false")"
+                           OnClick="OpenSideMenu" />
+
+            <div class="appbar-slot">
+                @if (_headerContent is not null)
+                {
+                    @_headerContent
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">Vendr Embed</MudText>
+                }
+            </div>
         </MudContainer>
     </MudAppBar>
 
@@ -23,12 +33,33 @@
     </MudMainContent>
 </MudLayout>
 
+<div class="side-menu-backdrop @(_sideMenuOpen ? "visible" : string.Empty)" @onclick="CloseSideMenu"></div>
+
+<nav class="side-menu @(_sideMenuOpen ? "open" : string.Empty)" aria-label="Hoofdmenu" aria-hidden="@(!_sideMenuOpen ? "true" : "false")">
+    <button type="button" class="closebtn" @onclick="CloseSideMenu" aria-label="Menu sluiten">&times;</button>
+    <a href="#over">Over</a>
+    <a href="#diensten">Diensten</a>
+    <a href="#klanten">Klanten</a>
+    <a href="#contact">Contact</a>
+</nav>
+
 @code {
     private RenderFragment? _headerContent;
+    private bool _sideMenuOpen;
 
     public void SetHeader(RenderFragment? fragment)
     {
         _headerContent = fragment;
         _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OpenSideMenu()
+    {
+        _sideMenuOpen = true;
+    }
+
+    private void CloseSideMenu()
+    {
+        _sideMenuOpen = false;
     }
 }

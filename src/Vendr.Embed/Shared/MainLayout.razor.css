@@ -1,0 +1,88 @@
+.appbar-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.appbar-slot {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.side-menu-trigger {
+    color: inherit;
+}
+
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1500;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: width 0.3s ease;
+    padding-top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.side-menu.open {
+    width: min(260px, 80vw);
+}
+
+.side-menu a {
+    padding: 0.5rem 2rem;
+    text-decoration: none;
+    font-size: 1.25rem;
+    color: #818181;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.side-menu a:hover,
+.side-menu a:focus-visible {
+    color: #f1f1f1;
+}
+
+.side-menu .closebtn {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-size: 2rem;
+    margin-left: 50px;
+    background: transparent;
+    border: none;
+    color: #f1f1f1;
+    cursor: pointer;
+}
+
+.side-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1400;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.side-menu-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media screen and (max-height: 450px) {
+    .side-menu {
+        padding-top: 48px;
+    }
+
+    .side-menu a {
+        font-size: 1rem;
+    }
+}
