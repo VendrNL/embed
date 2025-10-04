@@ -23,12 +23,14 @@ function initHamburgerMenu() {
 
   const focusableSelector = 'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 
-  let $backdrop = $header.querySelector('.header-menu__backdrop');
-  if (!$backdrop) {
+  const menuHost = $menu.parentElement || $header || document.body;
+
+  let $backdrop = menuHost.querySelector('.header-menu__backdrop');
+  if (!$backdrop || $backdrop.parentElement !== menuHost) {
     $backdrop = document.createElement('div');
     $backdrop.className = 'header-menu__backdrop';
     $backdrop.setAttribute('aria-hidden', 'true');
-    $header.insertBefore($backdrop, $menu);
+    menuHost.insertBefore($backdrop, $menu);
   }
 
   const $closeButton = $menu.querySelector('.header-menu__close');
