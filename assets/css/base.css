@@ -155,7 +155,7 @@ main.container.themed > .hamburger {
   font: 0.9rem/1.4 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 450px) {
   .style-panel__field {
     grid-template-columns: var(--style-panel-label-width) 1fr;
     column-gap: 16px;
@@ -183,7 +183,7 @@ main.container.themed > .hamburger {
   height: 18px;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 450px) {
   .style-panel__toggle {
     display: grid;
     grid-template-columns: var(--style-panel-label-width) 1fr;
