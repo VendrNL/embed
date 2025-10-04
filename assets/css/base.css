@@ -269,7 +269,7 @@ body.has-menu-open {
   padding: 168px 0 32px;
   box-shadow: none;
   transition: width 0.3s ease;
-  z-index: 4002;
+  z-index: 3999;
   box-sizing: border-box;
   pointer-events: none;
 }
