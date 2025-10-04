@@ -57,6 +57,10 @@ main.container.themed > .hamburger {
   align-items: start;
 }
 
+.themed-layout--no-panel {
+  display: block;
+}
+
 .results {
   display: flex;
   flex-direction: column;
@@ -285,6 +289,12 @@ body.has-menu-open {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.header-menu__inner .style-panel {
+  position: static;
+  top: auto;
+  box-shadow: none;
 }
 
 .header-menu__list {

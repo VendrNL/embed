@@ -75,206 +75,200 @@
     <nav id="primaryNavigation" class="header-menu open" aria-label="Hoofdmenu" aria-hidden="false">
       <button class="header-menu__close" type="button" aria-label="Menu sluiten">×</button>
       <div class="header-menu__inner">
-        <ul class="header-menu__list">
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Overzicht</a></li>
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Collecties</a></li>
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Instellingen</a></li>
-        </ul>
+        <aside class="style-panel" aria-labelledby="style-panel-title">
+          <div class="style-panel__intro">
+            <h2 id="style-panel-title">Stijl</h2>
+            <p>Pas kleuren, fonts en kaartopmaak aan zonder het filterblok in de header aan te passen.</p>
+          </div>
+
+          <form class="style-panel__form" autocomplete="off">
+            <fieldset class="style-panel__section">
+              <legend>Kleuren</legend>
+              <label class="style-panel__field" for="styleButtonColor">
+                <span>Knop</span>
+                <input type="color" id="styleButtonColor" name="styleButtonColor"
+                       data-css-prop="--accent --c-accent"
+                       data-sample-selector=".card .actions .btn" data-sample-prop="background-color"
+                       value="#2563eb" />
+              </label>
+
+              <label class="style-panel__field" for="styleBadgeColor">
+                <span>Label</span>
+                <input type="color" id="styleBadgeColor" name="styleBadgeColor"
+                       data-css-prop="--badge-color --c-pill"
+                       data-sample-selector=".card .media .badge" data-sample-prop="background-color"
+                       value="#22c55e" />
+              </label>
+
+              <label class="style-panel__field" for="styleLabelTextColor">
+                <span>Tekst label</span>
+                <input type="color" id="styleLabelTextColor" name="styleLabelTextColor"
+                       data-css-prop="--badge-text"
+                       data-sample-selector=".card .media .badge" data-sample-prop="color"
+                       value="#052e16" />
+              </label>
+
+              <label class="style-panel__field" for="styleButtonTextColor">
+                <span>Tekst knop</span>
+                <input type="color" id="styleButtonTextColor" name="styleButtonTextColor"
+                       data-css-prop="--button-text"
+                       data-sample-selector=".card .actions .btn" data-sample-prop="color"
+                       value="#ffffff" />
+              </label>
+
+              <label class="style-panel__field" for="styleTitleTextColor">
+                <span>Tekst titel</span>
+                <input type="color" id="styleTitleTextColor" name="styleTitleTextColor"
+                       data-css-prop="--title-color --c-primary"
+                       data-sample-selector=".card .body .name" data-sample-prop="color"
+                       value="#0f172a" />
+              </label>
+
+              <label class="style-panel__field" for="styleGeneralTextColor">
+                <span>Tekst algemeen</span>
+                <input type="color" id="styleGeneralTextColor" name="styleGeneralTextColor"
+                       data-css-prop="--general-text --c-text --c-addr --c-muted"
+                       data-sample-selector=".card .body .addr" data-sample-prop="color"
+                       value="#475569" />
+              </label>
+
+              <label class="style-panel__field" for="styleCardColor">
+                <span>Kaart achtergrond</span>
+                <input type="color" id="styleCardColor" name="styleCardColor"
+                       data-css-prop="--c-card"
+                       data-sample-selector=".card" data-sample-prop="background-color"
+                       value="#ffffff" />
+              </label>
+            </fieldset>
+
+            <fieldset class="style-panel__section">
+              <legend>Typografie</legend>
+              <label class="style-panel__field" for="styleBodyFont">
+                <span>Algemeen</span>
+                <select id="styleBodyFont" data-font-target="body" data-font-selector=".card .body">
+                  <option value="inter">Inter</option>
+                  <option value="roboto">Roboto</option>
+                  <option value="roboto-slab">Roboto Slab</option>
+                </select>
+              </label>
+
+              <label class="style-panel__field" for="styleHeadingFont">
+                <span>Titel</span>
+                <select id="styleHeadingFont" data-font-target="heading" data-font-selector=".card .body .name">
+                  <option value="roboto-slab">Roboto Slab</option>
+                  <option value="inter">Inter</option>
+                  <option value="roboto">Roboto</option>
+                </select>
+              </label>
+
+              <label class="style-panel__field" for="styleLabelFont">
+                <span>Label</span>
+                <select id="styleLabelFont" data-font-target="label" data-font-selector=".card .media .badge">
+                  <option value="inter">Inter</option>
+                  <option value="roboto">Roboto</option>
+                  <option value="roboto-slab">Roboto Slab</option>
+                </select>
+              </label>
+
+              <label class="style-panel__field" for="styleButtonFont">
+                <span>Knop</span>
+                <select id="styleButtonFont" data-font-target="button" data-font-selector=".card .actions .btn">
+                  <option value="inter">Inter</option>
+                  <option value="roboto">Roboto</option>
+                  <option value="roboto-slab">Roboto Slab</option>
+                </select>
+              </label>
+            </fieldset>
+
+            <fieldset class="style-panel__section">
+              <legend>Kaartopmaak</legend>
+              <label class="style-panel__field" for="styleAspectRatio">
+                <span>Verhouding</span>
+                <select id="styleAspectRatio" data-aspect-select>
+                  <option value="2 / 3">2/3</option>
+                  <option value="3 / 4">3/4</option>
+                  <option value="5 / 7">5/7</option>
+                  <option value="7 / 8" selected>7/8</option>
+                </select>
+              </label>
+
+              <label class="style-panel__field" for="styleRadius">
+                <span>Hoekradius kaart</span>
+                <input type="range" id="styleRadius" min="0" max="32" step="2" value="14"
+                       data-css-prop="--radius" data-unit="px"
+                       data-sample-selector=".card" data-sample-prop="border-top-left-radius" />
+              </label>
+
+              <label class="style-panel__field" for="styleMediaRatio">
+                <span>Afbeeldingshoogte</span>
+                <input type="range" id="styleMediaRatio" min="40" max="80" step="2" value="58"
+                       data-css-prop="--media-ratio" data-unit="%" />
+              </label>
+
+              <label class="style-panel__field" for="styleBadgeSize">
+                <span>Afmeting label</span>
+                <input type="range" id="styleBadgeSize" min="6" max="28" step="1" value="10"
+                       data-css-prop="--badge-padding" data-unit="px"
+                       data-sample-selector=".card .media .badge" data-sample-prop="padding-right" />
+              </label>
+
+              <label class="style-panel__field" for="styleButtonSize">
+                <span>Afmeting knop</span>
+                <input type="range" id="styleButtonSize" min="10" max="36" step="1" value="14"
+                       data-css-prop="--button-padding" data-unit="px"
+                       data-sample-selector=".card .actions .btn" data-sample-prop="padding-right" />
+              </label>
+
+              <label class="style-panel__field" for="styleBadgeOffset">
+                <span>Afstand label</span>
+                <input type="range" id="styleBadgeOffset" min="0" max="64" step="1" value="12"
+                       data-css-prop="--badge-offset" data-unit="px"
+                       data-sample-selector=".card .media .badge" data-sample-prop="left" />
+              </label>
+
+              <label class="style-panel__field" for="styleButtonOffset">
+                <span>Afstand knop</span>
+                <input type="range" id="styleButtonOffset" min="0" max="64" step="1" value="16"
+                       data-css-prop="--button-offset" data-unit="px"
+                       data-sample-selector=".card .actions" data-sample-prop="padding-right" />
+              </label>
+
+              <label class="style-panel__field" for="styleBadgeRadius">
+                <span>Hoekradius label</span>
+                <input type="range" id="styleBadgeRadius" min="0" max="48" step="1" value="4"
+                       data-css-prop="--badge-radius" data-unit="px"
+                       data-sample-selector=".card .media .badge" data-sample-prop="border-top-left-radius" />
+              </label>
+
+              <label class="style-panel__field" for="styleButtonRadius">
+                <span>Hoekradius knop</span>
+                <input type="range" id="styleButtonRadius" min="0" max="120" step="1" value="40"
+                       data-css-prop="--button-radius" data-unit="px"
+                       data-sample-selector=".card .actions .btn" data-sample-prop="border-radius" />
+              </label>
+
+              <label class="style-panel__field" for="styleElevation">
+                <span>Schaduw kaart</span>
+                <input type="range" id="styleElevation" min="0" max="12" step="1" value="4"
+                       data-elevation />
+              </label>
+
+              <label class="style-panel__field" for="styleButtonShadow">
+                <span>Schaduw knop</span>
+                <input type="range" id="styleButtonShadow" min="0" max="12" step="1" value="4"
+                       data-button-shadow />
+              </label>
+
+              <label class="style-panel__toggle" for="styleOutline">
+                <input type="checkbox" id="styleOutline" checked />
+                <span>Rand zichtbaar</span>
+              </label>
+            </fieldset>
+          </form>
+        </aside>
       </div>
     </nav>
-    <div class="themed-layout">
-      <aside class="style-panel" aria-labelledby="style-panel-title">
-        <div class="style-panel__intro">
-          <h2 id="style-panel-title">Stijl</h2>
-          <p>Pas kleuren, fonts en kaartopmaak aan zonder het filterblok in de header aan te passen.</p>
-        </div>
-
-        <form class="style-panel__form" autocomplete="off">
-          <fieldset class="style-panel__section">
-            <legend>Kleuren</legend>
-            <label class="style-panel__field" for="styleButtonColor">
-              <span>Knop</span>
-              <input type="color" id="styleButtonColor" name="styleButtonColor"
-                     data-css-prop="--accent --c-accent"
-                     data-sample-selector=".card .actions .btn" data-sample-prop="background-color"
-                     value="#2563eb" />
-            </label>
-
-            <label class="style-panel__field" for="styleBadgeColor">
-              <span>Label</span>
-              <input type="color" id="styleBadgeColor" name="styleBadgeColor"
-                     data-css-prop="--badge-color --c-pill"
-                     data-sample-selector=".card .media .badge" data-sample-prop="background-color"
-                     value="#22c55e" />
-            </label>
-
-            <label class="style-panel__field" for="styleLabelTextColor">
-              <span>Tekst label</span>
-              <input type="color" id="styleLabelTextColor" name="styleLabelTextColor"
-                     data-css-prop="--badge-text"
-                     data-sample-selector=".card .media .badge" data-sample-prop="color"
-                     value="#052e16" />
-            </label>
-
-            <label class="style-panel__field" for="styleButtonTextColor">
-              <span>Tekst knop</span>
-              <input type="color" id="styleButtonTextColor" name="styleButtonTextColor"
-                     data-css-prop="--button-text"
-                     data-sample-selector=".card .actions .btn" data-sample-prop="color"
-                     value="#ffffff" />
-            </label>
-
-            <label class="style-panel__field" for="styleTitleTextColor">
-              <span>Tekst titel</span>
-              <input type="color" id="styleTitleTextColor" name="styleTitleTextColor"
-                     data-css-prop="--title-color --c-primary"
-                     data-sample-selector=".card .body .name" data-sample-prop="color"
-                     value="#0f172a" />
-            </label>
-
-            <label class="style-panel__field" for="styleGeneralTextColor">
-              <span>Tekst algemeen</span>
-              <input type="color" id="styleGeneralTextColor" name="styleGeneralTextColor"
-                     data-css-prop="--general-text --c-text --c-addr --c-muted"
-                     data-sample-selector=".card .body .addr" data-sample-prop="color"
-                     value="#475569" />
-            </label>
-
-            <label class="style-panel__field" for="styleCardColor">
-              <span>Kaart achtergrond</span>
-              <input type="color" id="styleCardColor" name="styleCardColor"
-                     data-css-prop="--c-card"
-                     data-sample-selector=".card" data-sample-prop="background-color"
-                     value="#ffffff" />
-            </label>
-          </fieldset>
-
-          <fieldset class="style-panel__section">
-            <legend>Typografie</legend>
-            <label class="style-panel__field" for="styleBodyFont">
-              <span>Algemeen</span>
-              <select id="styleBodyFont" data-font-target="body" data-font-selector=".card .body">
-                <option value="inter">Inter</option>
-                <option value="roboto">Roboto</option>
-                <option value="roboto-slab">Roboto Slab</option>
-              </select>
-            </label>
-
-            <label class="style-panel__field" for="styleHeadingFont">
-              <span>Titel</span>
-              <select id="styleHeadingFont" data-font-target="heading" data-font-selector=".card .body .name">
-                <option value="roboto-slab">Roboto Slab</option>
-                <option value="inter">Inter</option>
-                <option value="roboto">Roboto</option>
-              </select>
-            </label>
-
-            <label class="style-panel__field" for="styleLabelFont">
-              <span>Label</span>
-              <select id="styleLabelFont" data-font-target="label" data-font-selector=".card .media .badge">
-                <option value="inter">Inter</option>
-                <option value="roboto">Roboto</option>
-                <option value="roboto-slab">Roboto Slab</option>
-              </select>
-            </label>
-
-            <label class="style-panel__field" for="styleButtonFont">
-              <span>Knop</span>
-              <select id="styleButtonFont" data-font-target="button" data-font-selector=".card .actions .btn">
-                <option value="inter">Inter</option>
-                <option value="roboto">Roboto</option>
-                <option value="roboto-slab">Roboto Slab</option>
-              </select>
-            </label>
-          </fieldset>
-
-          <fieldset class="style-panel__section">
-            <legend>Kaartopmaak</legend>
-            <label class="style-panel__field" for="styleAspectRatio">
-              <span>Verhouding</span>
-              <select id="styleAspectRatio" data-aspect-select>
-                <option value="2 / 3">2/3</option>
-                <option value="3 / 4">3/4</option>
-                <option value="5 / 7">5/7</option>
-                <option value="7 / 8" selected>7/8</option>
-              </select>
-            </label>
-
-            <label class="style-panel__field" for="styleRadius">
-              <span>Hoekradius kaart</span>
-              <input type="range" id="styleRadius" min="0" max="32" step="2" value="14"
-                     data-css-prop="--radius" data-unit="px"
-                     data-sample-selector=".card" data-sample-prop="border-top-left-radius" />
-            </label>
-
-            <label class="style-panel__field" for="styleMediaRatio">
-              <span>Afbeeldingshoogte</span>
-              <input type="range" id="styleMediaRatio" min="40" max="80" step="2" value="58"
-                     data-css-prop="--media-ratio" data-unit="%" />
-            </label>
-
-            <label class="style-panel__field" for="styleBadgeSize">
-              <span>Afmeting label</span>
-              <input type="range" id="styleBadgeSize" min="6" max="28" step="1" value="10"
-                     data-css-prop="--badge-padding" data-unit="px"
-                     data-sample-selector=".card .media .badge" data-sample-prop="padding-right" />
-            </label>
-
-            <label class="style-panel__field" for="styleButtonSize">
-              <span>Afmeting knop</span>
-              <input type="range" id="styleButtonSize" min="10" max="36" step="1" value="14"
-                     data-css-prop="--button-padding" data-unit="px"
-                     data-sample-selector=".card .actions .btn" data-sample-prop="padding-right" />
-            </label>
-
-            <label class="style-panel__field" for="styleBadgeOffset">
-              <span>Afstand label</span>
-              <input type="range" id="styleBadgeOffset" min="0" max="64" step="1" value="12"
-                     data-css-prop="--badge-offset" data-unit="px"
-                     data-sample-selector=".card .media .badge" data-sample-prop="left" />
-            </label>
-
-            <label class="style-panel__field" for="styleButtonOffset">
-              <span>Afstand knop</span>
-              <input type="range" id="styleButtonOffset" min="0" max="64" step="1" value="16"
-                     data-css-prop="--button-offset" data-unit="px"
-                     data-sample-selector=".card .actions" data-sample-prop="padding-right" />
-            </label>
-
-            <label class="style-panel__field" for="styleBadgeRadius">
-              <span>Hoekradius label</span>
-              <input type="range" id="styleBadgeRadius" min="0" max="48" step="1" value="4"
-                     data-css-prop="--badge-radius" data-unit="px"
-                     data-sample-selector=".card .media .badge" data-sample-prop="border-top-left-radius" />
-            </label>
-
-            <label class="style-panel__field" for="styleButtonRadius">
-              <span>Hoekradius knop</span>
-              <input type="range" id="styleButtonRadius" min="0" max="120" step="1" value="40"
-                     data-css-prop="--button-radius" data-unit="px"
-                     data-sample-selector=".card .actions .btn" data-sample-prop="border-radius" />
-            </label>
-
-            <label class="style-panel__field" for="styleElevation">
-              <span>Schaduw kaart</span>
-              <input type="range" id="styleElevation" min="0" max="12" step="1" value="4"
-                     data-elevation />
-            </label>
-
-            <label class="style-panel__field" for="styleButtonShadow">
-              <span>Schaduw knop</span>
-              <input type="range" id="styleButtonShadow" min="0" max="12" step="1" value="4"
-                     data-button-shadow />
-            </label>
-
-            <label class="style-panel__toggle" for="styleOutline">
-              <input type="checkbox" id="styleOutline" checked />
-              <span>Rand zichtbaar</span>
-            </label>
-          </fieldset>
-        </form>
-      </aside>
-
+    <div class="themed-layout themed-layout--no-panel">
       <section class="results" aria-label="Resultaten">
         <!-- Foutmeldingen -->
         <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
