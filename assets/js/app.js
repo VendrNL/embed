@@ -14,6 +14,54 @@ let $themeLink    = document.getElementById('themeStylesheet');
 let $defaultThemeLink = document.getElementById('defaultThemeStylesheet');
 const $stylePanel = document.querySelector('.style-panel');
 const $mainThemed = document.querySelector('main.container.themed');
+const $header     = document.querySelector('.header--neutral');
+const $hamburger  = document.querySelector('.hamburger');
+const $menu       = document.getElementById('primaryNavigation');
+
+function initHamburgerMenu() {
+  if (!$header || !$hamburger || !$menu) return;
+
+  const setMenuState = (open) => {
+    const isOpen = Boolean(open);
+    $header.classList.toggle('menu-open', isOpen);
+    $menu.hidden = !isOpen;
+    $hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  };
+
+  setMenuState(false);
+
+  $hamburger.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const open = !$header.classList.contains('menu-open');
+    setMenuState(open);
+  });
+
+  $menu.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.closest('a')) {
+      setMenuState(false);
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!$header.classList.contains('menu-open')) return;
+    if ($header.contains(event.target)) return;
+    setMenuState(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && $header.classList.contains('menu-open')) {
+      setMenuState(false);
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHamburgerMenu, { once: true });
+} else {
+  initHamburgerMenu();
+}
 
 const DEFAULT_THEME_STYLESHEET = 'assets/css/themes/default.css';
 const OVERRIDE_STYLES = `

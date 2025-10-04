@@ -34,7 +34,7 @@
   <!-- Sticky Header (neutrale stijl) -->
   <header class="header--neutral">
     <div class="container header-bar">
-      <button class="hamburger" type="button" aria-label="Open navigatie" aria-expanded="false">
+      <button class="hamburger" type="button" aria-label="Open navigatie" aria-expanded="false" aria-controls="primaryNavigation">
         <span></span>
         <span></span>
         <span></span>
@@ -68,6 +68,15 @@
         </label>
       </div>
     </div>
+    <nav id="primaryNavigation" class="header-menu" aria-label="Hoofdmenu" hidden>
+      <div class="header-menu__inner container">
+        <ul class="header-menu__list">
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Overzicht</a></li>
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Collecties</a></li>
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Instellingen</a></li>
+        </ul>
+      </div>
+    </nav>
   </header>
 
   <!-- Main content (themed) -->
