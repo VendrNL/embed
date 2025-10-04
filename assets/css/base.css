@@ -297,13 +297,13 @@ body.has-menu-open {
 }
 
 .header-menu__item {
-  width: 100%;
+  width: 80%;
 }
 
 .header-menu__link {
   display: block;
   padding: 12px 32px;
-  color: inherit;
+  color: #313233;
   font-weight: 500;
   font-size: 1.1em;
   text-decoration: none;
