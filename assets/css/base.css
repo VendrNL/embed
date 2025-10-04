@@ -257,21 +257,6 @@ body.has-menu-open {
   font: 0.9em 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
-.header-menu__backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  z-index: 3995;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.header-menu__backdrop.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
 .header-menu {
   position: fixed;
   inset: 0 auto 0 0;
@@ -290,7 +275,8 @@ body.has-menu-open {
 }
 
 .header-menu.open {
-  width: min(320px, 85vw);
+  width: min(max(600px, 85vw), 100vw);
+  min-width: 600px;
   box-shadow: 18px 0 32px rgba(15, 23, 42, 0.25);
   pointer-events: auto;
 }

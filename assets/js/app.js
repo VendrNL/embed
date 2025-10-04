@@ -23,14 +23,10 @@ function initHamburgerMenu() {
 
   const focusableSelector = 'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 
-  const menuHost = $menu.parentElement || $header || document.body;
-
-  let $backdrop = menuHost.querySelector('.header-menu__backdrop');
-  if (!$backdrop || $backdrop.parentElement !== menuHost) {
-    $backdrop = document.createElement('div');
-    $backdrop.className = 'header-menu__backdrop';
-    $backdrop.setAttribute('aria-hidden', 'true');
-    menuHost.insertBefore($backdrop, $menu);
+  const menuParent = $menu.parentElement;
+  const existingBackdrop = menuParent?.querySelector('.header-menu__backdrop');
+  if (existingBackdrop && existingBackdrop.parentElement) {
+    existingBackdrop.parentElement.removeChild(existingBackdrop);
   }
 
   const $closeButton = $menu.querySelector('.header-menu__close');
@@ -49,10 +45,6 @@ function initHamburgerMenu() {
     $menu.classList.toggle('open', isOpen);
     $menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
     $hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    if ($backdrop) {
-      $backdrop.classList.toggle('visible', isOpen);
-      $backdrop.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-    }
     applyScrollLock(isOpen);
 
     const stateChanged = wasOpen !== isOpen;
@@ -104,14 +96,6 @@ function initHamburgerMenu() {
 
   if ($closeButton) {
     $closeButton.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      closeMenu();
-    });
-  }
-
-  if ($backdrop) {
-    $backdrop.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
       closeMenu();
