@@ -41,6 +41,13 @@ main.container.themed {
   --font-heading: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
   --font-label: var(--font-body);
   --font-button: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+main.container.themed > .hamburger {
+  align-self: flex-start;
+  margin-bottom: 16px;
 }
 
 .themed-layout {
