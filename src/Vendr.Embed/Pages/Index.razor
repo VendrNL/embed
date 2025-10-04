@@ -67,9 +67,18 @@ else
             </MudPaper>
 
             <MudStack Class="main-column" Spacing="2" Style="@MainFontStyle">
-                <MudText Typo="Typo.subtitle1" Class="font-semibold">
-                    @_filtered.Count resultaat@(_filtered.Count == 1 ? string.Empty : "en")
-                </MudText>
+                <MudStack Row="true" AlignItems="AlignItems.Center" JustifyContent="Justify.SpaceBetween" Class="main-toolbar">
+                    <MudText Typo="Typo.subtitle1" Class="font-semibold">
+                        @_filtered.Count resultaat@(_filtered.Count == 1 ? string.Empty : "en")
+                    </MudText>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Tune"
+                               OnClick="OpenStyleMenu"
+                               Class="style-menu-button">
+                        Stijlmenu
+                    </MudButton>
+                </MudStack>
 
                 <MudGrid GutterSize="GutterSize.Medium">
                     @foreach (var listing in _filtered)
@@ -97,72 +106,77 @@ else
                     }
                 </MudGrid>
             </MudStack>
-
-            <MudPaper Class="style-panel pa-4" Elevation="1">
-                <MudStack Spacing="1.5">
-                    <MudStack Spacing="0.5">
-                        <MudText Typo="Typo.subtitle2">Stijl</MudText>
-                        <MudText Typo="Typo.caption" Class="text-secondary">Pas de kleuren en kaarten visueel aan.</MudText>
-                    </MudStack>
-                    <MudDivider />
-
-                    <MudTreeView ExpandOnClick="true">
-                        <MudTreeViewItem Text="Kleuren" @bind-Expanded="ColorsExpanded">
-                            <Content>
-                                <MudStack Spacing="0.75" Class="mt-2">
-                                    <MudStack Spacing="0.75">
-                                        <MudText Typo="Typo.caption" Class="font-semibold">Primaire kleur</MudText>
-                                        <MudColorPicker @bind-Color="PrimaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
-                                    </MudStack>
-
-                                    <MudStack Spacing="0.75">
-                                        <MudText Typo="Typo.caption" Class="font-semibold">Accentkleur</MudText>
-                                        <MudColorPicker @bind-Color="SecondaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
-                                    </MudStack>
-                                </MudStack>
-                            </Content>
-                        </MudTreeViewItem>
-
-                        <MudTreeViewItem Text="Typografie" @bind-Expanded="TypographyExpanded">
-                            <Content>
-                                <MudStack Spacing="0.75" Class="mt-2">
-                                    <MudText Typo="Typo.caption" Class="font-semibold">Lettertype</MudText>
-                                    <MudSelect T="string" @bind-Value="_selectedFontKey" Dense="true" DisableUnderLine="true">
-                                        @foreach (var option in _fontOptions)
-                                        {
-                                            <MudSelectItem Value="@option.Key">@option.Key</MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                </MudStack>
-                            </Content>
-                        </MudTreeViewItem>
-
-                        <MudTreeViewItem Text="Kaartopmaak" @bind-Expanded="CardLayoutExpanded">
-                            <Content>
-                                <MudStack Spacing="0.75" Class="mt-2">
-                                    <MudStack Spacing="0.75">
-                                        <MudText Typo="Typo.caption" Class="font-semibold">Kaart-elevatie</MudText>
-                                        <MudSlider T="int" @bind-Value="_cardElevation" Min="0" Max="12" Step="1" Color="Color.Primary" ValueLabel="true" />
-                                    </MudStack>
-
-                                    <MudStack Spacing="0.75">
-                                        <MudText Typo="Typo.caption" Class="font-semibold">Hoekradius</MudText>
-                                        <MudSlider T="int" @bind-Value="_cardCornerRadius" Min="0" Max="32" Step="2" Color="Color.Primary" ValueLabel="true" />
-                                    </MudStack>
-
-                                    <MudStack Spacing="0.75">
-                                        <MudText Typo="Typo.caption" Class="font-semibold">Afbeelding hoogte</MudText>
-                                        <MudSlider T="int" @bind-Value="_cardImageHeight" Min="140" Max="260" Step="10" Color="Color.Primary" ValueLabel="true" />
-                                    </MudStack>
-
-                                    <MudSwitch @bind-Checked="_cardOutlined" Color="Color.Primary" Label="Rand zichtbaar" />
-                                </MudStack>
-                            </Content>
-                        </MudTreeViewItem>
-                    </MudTreeView>
-                </MudStack>
-            </MudPaper>
         </MudStack>
+        @if (_styleMenuOpen)
+        {
+            <div class="style-sidenav-backdrop" @onclick="CloseStyleMenu"></div>
+        }
+
+        <div class="style-sidenav @(_styleMenuOpen ? "open" : string.Empty)">
+            <button type="button" class="closebtn" @onclick="CloseStyleMenu">&times;</button>
+            <MudStack Spacing="1.5" Class="style-sidenav-content">
+                <MudStack Spacing="0.5">
+                    <MudText Typo="Typo.subtitle2">Stijl</MudText>
+                    <MudText Typo="Typo.caption" Class="text-secondary">Pas de kleuren en kaarten visueel aan.</MudText>
+                </MudStack>
+                <MudDivider />
+
+                <MudTreeView ExpandOnClick="true">
+                    <MudTreeViewItem Text="Kleuren" @bind-Expanded="ColorsExpanded">
+                        <Content>
+                            <MudStack Spacing="0.75" Class="mt-2">
+                                <MudStack Spacing="0.75">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Primaire kleur</MudText>
+                                    <MudColorPicker @bind-Color="PrimaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                                </MudStack>
+
+                                <MudStack Spacing="0.75">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Accentkleur</MudText>
+                                    <MudColorPicker @bind-Color="SecondaryColor" DisableAlpha="true" PickerVariant="PickerVariant.Static" Class="color-picker" />
+                                </MudStack>
+                            </MudStack>
+                        </Content>
+                    </MudTreeViewItem>
+
+                    <MudTreeViewItem Text="Typografie" @bind-Expanded="TypographyExpanded">
+                        <Content>
+                            <MudStack Spacing="0.75" Class="mt-2">
+                                <MudText Typo="Typo.caption" Class="font-semibold">Lettertype</MudText>
+                                <MudSelect T="string" @bind-Value="_selectedFontKey" Dense="true" DisableUnderLine="true">
+                                    @foreach (var option in _fontOptions)
+                                    {
+                                        <MudSelectItem Value="@option.Key">@option.Key</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudStack>
+                        </Content>
+                    </MudTreeViewItem>
+
+                    <MudTreeViewItem Text="Kaartopmaak" @bind-Expanded="CardLayoutExpanded">
+                        <Content>
+                            <MudStack Spacing="0.75" Class="mt-2">
+                                <MudStack Spacing="0.75">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Kaart-elevatie</MudText>
+                                    <MudSlider T="int" @bind-Value="_cardElevation" Min="0" Max="12" Step="1" Color="Color.Primary" ValueLabel="true" />
+                                </MudStack>
+
+                                <MudStack Spacing="0.75">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Hoekradius</MudText>
+                                    <MudSlider T="int" @bind-Value="_cardCornerRadius" Min="0" Max="32" Step="2" Color="Color.Primary" ValueLabel="true" />
+                                </MudStack>
+
+                                <MudStack Spacing="0.75">
+                                    <MudText Typo="Typo.caption" Class="font-semibold">Afbeelding hoogte</MudText>
+                                    <MudSlider T="int" @bind-Value="_cardImageHeight" Min="140" Max="260" Step="10" Color="Color.Primary" ValueLabel="true" />
+                                </MudStack>
+
+                                <MudSwitch @bind-Checked="_cardOutlined" Color="Color.Primary" Label="Rand zichtbaar" />
+                            </MudStack>
+                        </Content>
+                    </MudTreeViewItem>
+                </MudTreeView>
+            </MudStack>
+        </div>
     </MudStack>
 }
 
@@ -193,6 +207,7 @@ else
     private string? _selectedStatus;
     private bool _filtersCollapsed;
     private bool _cardOutlined;
+    private bool _styleMenuOpen;
     private int _cardElevation = 1;
     private int _cardCornerRadius = 12;
     private int _cardImageHeight = 180;
@@ -447,6 +462,16 @@ else
     private void ToggleFilters()
     {
         _filtersCollapsed = !_filtersCollapsed;
+    }
+
+    private void OpenStyleMenu()
+    {
+        _styleMenuOpen = true;
+    }
+
+    private void CloseStyleMenu()
+    {
+        _styleMenuOpen = false;
     }
 
     private void InitializeStyleFromMeta(RealtorMeta meta)
