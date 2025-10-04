@@ -63,16 +63,6 @@
         </label>
       </div>
     </div>
-    <nav id="primaryNavigation" class="header-menu" aria-label="Hoofdmenu" aria-hidden="true">
-      <button class="header-menu__close" type="button" aria-label="Menu sluiten">&times;</button>
-      <div class="header-menu__inner">
-        <ul class="header-menu__list">
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Overzicht</a></li>
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Collecties</a></li>
-          <li class="header-menu__item"><a class="header-menu__link" href="#">Instellingen</a></li>
-        </ul>
-      </div>
-    </nav>
   </header>
 
   <!-- Main content (themed) -->
@@ -82,6 +72,16 @@
       <span></span>
       <span></span>
     </button>
+    <nav id="primaryNavigation" class="header-menu open" aria-label="Hoofdmenu" aria-hidden="false">
+      <button class="header-menu__close" type="button" aria-label="Menu sluiten">×</button>
+      <div class="header-menu__inner">
+        <ul class="header-menu__list">
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Overzicht</a></li>
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Collecties</a></li>
+          <li class="header-menu__item"><a class="header-menu__link" href="#">Instellingen</a></li>
+        </ul>
+      </div>
+    </nav>
     <div class="themed-layout">
       <aside class="style-panel" aria-labelledby="style-panel-title">
         <div class="style-panel__intro">
