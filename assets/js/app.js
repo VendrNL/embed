@@ -18,6 +18,8 @@ const $header     = document.querySelector('.header--neutral');
 const $hamburger  = document.querySelector('.hamburger');
 const $menu       = document.getElementById('primaryNavigation');
 
+let stylePanelAccordion = null;
+
 function initHamburgerMenu() {
   if (!$header || !$hamburger || !$menu) return;
 
@@ -53,6 +55,9 @@ function initHamburgerMenu() {
     }
 
     if (isOpen) {
+      if (stylePanelAccordion && typeof stylePanelAccordion.resetToDefault === 'function') {
+        stylePanelAccordion.resetToDefault();
+      }
       requestAnimationFrame(() => {
         const focusTarget =
           $menu.querySelector('.header-menu__close') ||
@@ -123,10 +128,90 @@ function initHamburgerMenu() {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHamburgerMenu, { once: true });
-} else {
+function initStylePanelAccordion() {
+  if (!$stylePanel) return null;
+
+  const sections = Array.from($stylePanel.querySelectorAll('.style-panel__section'));
+  if (!sections.length) {
+    return null;
+  }
+
+  const setSectionState = (section, expanded) => {
+    section.classList.toggle('style-panel__section--collapsed', !expanded);
+    section.classList.toggle('style-panel__section--expanded', expanded);
+    const legend = section.querySelector('legend');
+    if (legend) {
+      legend.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    }
+  };
+
+  const activateSection = (section) => {
+    sections.forEach((candidate) => {
+      setSectionState(candidate, candidate === section);
+    });
+  };
+
+  const activateByLegend = (text) => {
+    if (!text) return false;
+    const needle = text.trim().toLowerCase();
+    const target = sections.find((section) => {
+      const legend = section.querySelector('legend');
+      return legend && legend.textContent.trim().toLowerCase() === needle;
+    });
+    if (target) {
+      activateSection(target);
+      return true;
+    }
+    return false;
+  };
+
+  const defaultSection = sections.find((section) => {
+    const legend = section.querySelector('legend');
+    return legend && legend.textContent.trim().toLowerCase() === 'kaart';
+  }) || sections[0];
+
+  sections.forEach((section) => {
+    const legend = section.querySelector('legend');
+    if (!legend) return;
+    legend.setAttribute('role', 'button');
+    legend.setAttribute('tabindex', '0');
+    legend.setAttribute('aria-expanded', 'false');
+    legend.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      activateSection(section);
+    });
+    legend.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activateSection(section);
+      }
+    });
+  });
+
+  if (defaultSection) {
+    activateSection(defaultSection);
+  }
+
+  return {
+    activateByLegend,
+    resetToDefault() {
+      if (defaultSection) {
+        activateSection(defaultSection);
+      }
+    },
+  };
+}
+
+const initInteractiveUi = () => {
   initHamburgerMenu();
+  stylePanelAccordion = initStylePanelAccordion();
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initInteractiveUi, { once: true });
+} else {
+  initInteractiveUi();
 }
 
 const DEFAULT_THEME_STYLESHEET = 'assets/css/themes/default.css';
