@@ -19,6 +19,49 @@ body {
   font: 1em/1.55 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
+.realtor-selection-wrapper {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.realtor-selection {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.realtor-selection__label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+}
+
+.realtor-selection__select {
+  appearance: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font: 1rem/1.5 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  cursor: pointer;
+}
+
+.realtor-selection__select:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
 
 main.container.themed {

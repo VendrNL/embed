@@ -18,6 +18,21 @@ else if (!string.IsNullOrEmpty(_error))
         @_error
     </MudAlert>
 }
+else if (_showRealtorSelection)
+{
+    <div class="realtor-selection-wrapper">
+        <div class="realtor-selection">
+            <label class="realtor-selection__label" for="realtorSelect">Kies een makelaar</label>
+            <select id="realtorSelect" class="realtor-selection__select" @onchange="OnRealtorSelected">
+                <option value="">Selecteer een makelaar…</option>
+                @foreach (var option in _realtorOptions)
+                {
+                    <option value="@option.Key">@option.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+}
 else
 {
     <MudStack Spacing="3">
@@ -213,6 +228,7 @@ else
         ["Roboto"] = "'Roboto', -apple-system, 'Segoe UI', sans-serif",
         ["Roboto Slab"] = "'Roboto Slab', 'Times New Roman', serif"
     };
+    private readonly List<RealtorOption> _realtorOptions = new();
 
     private string? _selectedProvince;
     private string? _selectedType;
@@ -230,6 +246,7 @@ else
     private bool _loading = true;
     private RealtorMeta? _meta;
     private StyleSection _expandedSection = StyleSection.Colors;
+    private bool _showRealtorSelection;
 
     private string PageHeading => _meta?.Name ?? "Vendr Embed";
 
@@ -282,7 +299,8 @@ else
 
         if (string.IsNullOrWhiteSpace(realtorKey) && string.IsNullOrWhiteSpace(overrideFeed))
         {
-            throw new InvalidOperationException("Gebruik de parameter ?realtor= of ?feed= om een makelaar te tonen.");
+            await LoadRealtorSelectionAsync();
+            return;
         }
 
         IReadOnlyList<Listing> listings;
@@ -318,6 +336,41 @@ else
         }
 
         await ApplyCurrentPaletteAsync();
+    }
+
+    private async Task LoadRealtorSelectionAsync()
+    {
+        var map = await Http.GetFromJsonAsync<RealtorMap>("data/realtors.json");
+        if (map?.Realtors is null || map.Realtors.Count == 0)
+        {
+            throw new InvalidOperationException("Kon makelaarslijst niet laden. Controleer data/realtors.json.");
+        }
+
+        _realtorOptions.Clear();
+
+        foreach (var (key, meta) in map.Realtors)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                continue;
+            }
+
+            var name = meta?.Name;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                continue;
+            }
+
+            _realtorOptions.Add(new RealtorOption(key, name));
+        }
+
+        if (_realtorOptions.Count == 0)
+        {
+            throw new InvalidOperationException("Kon makelaarslijst niet laden. Controleer data/realtors.json.");
+        }
+
+        _realtorOptions.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+        _showRealtorSelection = true;
     }
 
     private async Task<IReadOnlyList<Listing>> FetchListingsAsync(string url)
@@ -491,6 +544,17 @@ else
         _styleMenuOpen = false;
     }
 
+    private void OnRealtorSelected(ChangeEventArgs args)
+    {
+        var selected = args.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(selected))
+        {
+            return;
+        }
+
+        Navigation.NavigateTo($"?realtor={selected}", forceLoad: true);
+    }
+
     private void InitializeStyleFromMeta(RealtorMeta meta)
     {
         if (!string.IsNullOrWhiteSpace(meta.Color))
@@ -565,6 +629,8 @@ else
 
     private static readonly MudColor DefaultPrimaryColor = new("#005c77");
     private static readonly MudColor DefaultSecondaryColor = new("#2196f3");
+
+    private sealed record RealtorOption(string Key, string Name);
 
     private enum StyleSection
     {
