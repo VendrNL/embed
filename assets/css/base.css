@@ -120,6 +120,30 @@ main.container.themed > .hamburger {
   letter-spacing: 0.04em;
   color: var(--muted);
   margin-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  user-select: none;
+}
+
+.style-panel__section legend::after {
+  content: '▾';
+  font-size: 0.8em;
+  transition: transform 0.2s ease;
+}
+
+.style-panel__section--collapsed legend::after {
+  transform: rotate(-90deg);
+}
+
+.style-panel__section--collapsed {
+  gap: 0;
+}
+
+.style-panel__section--collapsed > *:not(legend) {
+  display: none;
 }
 
 .style-panel__field {
