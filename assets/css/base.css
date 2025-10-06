@@ -72,7 +72,7 @@ main.container.themed {
   --badge-offset: 12px;
   --badge-radius: 4px;
   --badge-text: #ffffff;
-  --badge-color: #ff0000;
+  --badge-color: var(--c-pill, #ff0000);
   --button-padding: 14px;
   --button-offset: 16px;
   --button-radius: 40px;
