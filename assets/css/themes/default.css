@@ -1,5 +1,5 @@
 /************************************************************
- * GENERIC THEME 
+ * GENERIC THEME
  * Scope: main.container.themed …
  ************************************************************/
 
@@ -8,193 +8,371 @@
    ========================================================== */
 main.container.themed {
   /* Palet */
-  --c-bg:           #f7fafc;  /* kleur achtergrond van de pagina */
-  --c-card:         #ffffff;  /* achtergrond van de card */
-  --c-buttontext    #fff      /* tekstkleur van de button */
-  --c-border:       #e6edf2;  /* kleur card rand */
-  --c-pill:         #ff0000;  /* kleur pill */
-  --c-primary:      #161670;  /* kleur van de titel van het project */
-  --c-text:         #232323;  /* kleur standaard tekst */
-  --c-addr:         #232323;  /* kleur tekst adres */
-  --c-muted:        #232323;  /* kleur tekst ?? */
-/*--c-panel:        #ffffff;  komt niet verder voor */
-/*--c-panel-2:      #f1f6f9;  achtergrond media, geen effect */
-/*--c-primary-2:    #0d3f72;  komt niet voor */
-  --c-accent:       #ff335C;  /* kleur button */
+  --c-bg:            #f7fafc;
+  --c-card:          #ffffff;
+  --c-buttontext:    #ffffff;
+  --c-border:        #e6edf2;
+  --c-pill:          #ff0000;
+  --c-primary:       #161670;
+  --c-text:          #232323;
+  --c-addr:          #232323;
+  --c-muted:         #232323;
+  --c-accent:        #ff335c;
+  --accent:          var(--c-accent);
 
   /* Typografie */
-  --font-body:      'Roboto', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-  --font-heading:   'Roboto', var(--font-body);
-  --fz-base:        1em;
-  --fz-sm:          0.95em;
-  --fz-xs:          0.85em;
-  --fz-h3:          1.17em;
-  --fw-bold:        700;
+  --font-body:       'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --font-heading:    'Roboto', var(--font-body);
+  --fz-base:         1em;
+  --fz-sm:           0.95em;
+  --fz-xs:           0.85em;
+  --fz-h3:           1.17em;
+  --fw-bold:         700;
 
-  /* Layout */
-  --radius:         0px;  /ronde hoek van de card
-  --radius-button:  0px;  /ronde hoek van de button
-  --shadow:         0 8px 24px rgba(1,45,85,0.08);  /* dit is de standaard shadow  */
-  --shadow-soft:    0 1px 3px rgba(1,45,85,0.06);
-  --s-1: 6px; --s-2: 10px; --s-3: 12px; --s-4: 14px; --s-5: 16px; --s-6: 20px; --s-7: 24px;
-}
+  /* Layout tokens */
+  --radius:          0px;
+  --radius-button:   0px;
+  --shadow:          0 8px 24px rgba(1, 45, 85, 0.08);
+  --shadow-soft:     0 1px 3px rgba(1, 45, 85, 0.06);
+  --s-1: 6px;
+  --s-2: 10px;
+  --s-3: 12px;
+  --s-4: 14px;
+  --s-5: 16px;
+  --s-6: 20px;
+  --s-7: 24px;
 
-/* Basis */
-main.container.themed {
+  /* Component tokens */
+  --card-shadow:     none;
+  --card-aspect:     7 / 8;
+  --media-ratio:     58%;
+  --badge-padding:   10px;
+  --badge-offset:    12px;
+  --badge-radius:    4px;
+  --badge-text:      #ffffff;
+  --badge-color:     var(--c-pill);
+  --button-padding:  14px;
+  --button-offset:   16px;
+  --button-radius:   var(--radius-button);
+  --button-shadow:   0 6px 16px rgba(1, 45, 85, 0.18);
+  --button-shadow-hover: 0 10px 24px rgba(1, 45, 85, 0.25);
+  --button-text:     var(--c-buttontext);
+  --title-color:     var(--c-primary);
+  --general-text:    var(--c-text);
+  --font-label:      var(--font-body);
+  --font-button:     var(--font-body);
+
+  /* Alert & stats tokens (gebruikt in base.css) */
+  --alert-border:        #d33b3b;
+  --alert-background:    #fff1f1;
+  --alert-text:          #7a1e1e;
+  --alert-radius:        var(--radius);
+  --alert-padding:       var(--s-3) var(--s-5);
+  --alert-margin:        var(--s-4) 0;
+  --stats-color:         var(--c-muted);
+  --stats-margin:        var(--s-4) 0;
+  --stats-padding-bottom: calc(var(--s-7) + 8px);
+  --stats-font-size:     var(--fz-sm);
+
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   background: var(--c-bg);
   color: var(--c-text);
   font: var(--fz-base)/1.55 var(--font-body);
 }
 
+main.container.themed *,
+main.container.themed *::before,
+main.container.themed *::after {
+  box-sizing: border-box;
+}
+
+main.container.themed > .hamburger {
+  align-self: flex-start;
+  margin-bottom: 16px;
+}
+
 /* ==========================================================
-   1) ALERTS & STATS
+   1) LAYOUT STRUCTUUR
    ========================================================== */
-main.container.themed .alert {
-  border: 1px solid #d33b3b;
-  background: #fff1f1;
-  color: #7a1e1e;
-  border-radius: var(--radius);
-  padding: var(--s-3) var(--s-5);
-  margin: var(--s-4) 0;
-  box-shadow: var(--shadow-soft);
+main.container.themed .themed-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
 }
-main.container.themed .hidden { display:none; }
 
-main.container.themed .stats {
-  color: var(--c-muted);
-  margin: var(--s-4) 0;
-  padding-bottom: calc(var(--s-7) + 8px);
-  font-size: var(--fz-sm);
+main.container.themed .themed-layout--no-panel {
+  display: block;
+}
+
+main.container.themed .results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+main.container.themed .hidden {
+  display: none !important;
 }
 
 /* ==========================================================
-   2) GRID
+   2) STYLINGSPANEEL
+   ========================================================== */
+main.container.themed .style-panel {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  background: #ffffff;
+  border: 1px solid var(--c-border);
+  border-width: 0;
+  border-radius: 12px;
+  padding: 20px 20px 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+main.container.themed .style-panel,
+main.container.themed .style-panel * {
+  font-family: var(--font-body) !important;
+}
+
+main.container.themed .style-panel__intro h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+main.container.themed .style-panel__intro p {
+  margin: 8px 0 0;
+  color: var(--c-muted);
+  font-size: 0.9rem;
+}
+
+main.container.themed .style-panel__form {
+  display: grid;
+  gap: 20px;
+  --style-panel-label-width: 170px;
+}
+
+main.container.themed .style-panel__section {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+main.container.themed .style-panel__section legend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-muted);
+  margin-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  user-select: none;
+}
+
+main.container.themed .style-panel__section legend::after {
+  content: '▾';
+  font-size: 0.8em;
+  transition: transform 0.2s ease;
+}
+
+main.container.themed .style-panel__section--collapsed legend::after {
+  transform: rotate(-90deg);
+}
+
+main.container.themed .style-panel__section--collapsed {
+  gap: 0;
+}
+
+main.container.themed .style-panel__section--collapsed > *:not(legend) {
+  display: none;
+}
+
+main.container.themed .style-panel__field,
+main.container.themed .style-panel__toggle {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+main.container.themed .style-panel__field span,
+main.container.themed .style-panel__toggle span {
+  align-self: center;
+}
+
+main.container.themed .style-panel__toggle input {
+  justify-self: start;
+}
+
+/* ==========================================================
+   3) GRID & KAARTEN
    ========================================================== */
 main.container.themed .grid {
   display: grid;
-  gap: var(--s-7);
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
-/* ==========================================================
-   3) CARD (container)
-   ========================================================== */
 main.container.themed .card {
+  position: relative;
+  z-index: 0;
+  scroll-margin-top: 96px;
   background: var(--c-card);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-soft);
-  transition: box-shadow .18s ease, transform .18s ease;
-}
-main.container.themed .card:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-1px);
-}
-main.container.themed .card.highlight {
-  outline: 3px solid rgba(1,45,85,0.22);
-  box-shadow: 0 0 0 3px rgba(1,45,85,0.12) inset;
+  aspect-ratio: var(--card-aspect);
+  box-shadow: var(--card-shadow);
 }
 
-/* ==========================================================
-   3.1) CARD — MEDIA (afbeelding + badge)
-   ========================================================== */
 main.container.themed .card .media {
   position: relative;
-  background: var(--c-panel-2);
-  padding-top: 58%;
+  z-index: 0;
+  background: var(--c-panel-2, #f3f4f6);
+  padding-top: var(--media-ratio);
 }
+
 main.container.themed .card .media .img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 0;
 }
 
-/* Badge */
-main.container.themed .card .media span.badge {
+main.container.themed .card .media .badge {
   position: absolute;
-  left: 10px;
-  top: 10px;
-  background-color: var(--c-pill);
-  padding: 3px 10px;
-  color: #FFF;
-  font-family: var(--font-body);
-  font-size: 1rem;
+  left: var(--badge-offset);
+  top: var(--badge-offset);
+  padding: calc(var(--badge-padding) * 0.6) var(--badge-padding);
+  border-radius: var(--badge-radius);
   font-weight: var(--fw-bold);
-  line-height: 2rem;
-  margin: 0 0 8px 0;
-  border-radius: 0 0 0 0;
-  display: inline-block;
-  box-shadow:
-    rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
-    rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
-    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
-  z-index: 2;
+  font-size: 12px;
+  background-color: var(--badge-color);
+  color: var(--badge-text);
+  font-family: var(--font-label);
+  z-index: 1;
 }
 
-/* ==========================================================
-   3.2) CARD — BODY
-   ========================================================== */
+main.container.themed .card .media .badge.warn {
+  background: #f59e0b;
+  color: #2b1710;
+}
+
+main.container.themed .card .media .badge.sold {
+  background: #111827;
+  color: #ffffff;
+}
+
 main.container.themed .card .body {
   padding: var(--s-5) var(--s-6);
-  color: var(--c-text);
   font-size: var(--fz-sm);
-  background: transparent;  /* geen gradient */
+  font-family: var(--font-body);
+  color: var(--general-text);
   flex: 1 1 auto;
+  background: transparent;
 }
+
 main.container.themed .card .body .name {
   margin: 0 0 var(--s-2);
   font-family: var(--font-heading);
   font-weight: var(--fw-bold);
   font-size: var(--fz-h3);
   line-height: 1.25;
-  color: var(--c-primary);
+  color: var(--title-color);
 }
+
 main.container.themed .card .body .addr {
   margin: 0;
   color: var(--c-addr);
-  opacity: .9;
+  opacity: 0.9;
 }
+
 main.container.themed .card .body .meta {
   margin: var(--s-2) 0 0;
   color: var(--c-muted);
   font-size: var(--fz-xs);
 }
 
-/* ==========================================================
-   3.3) CARD — ACTIONS
-   ========================================================== */
 main.container.themed .card .actions {
   display: flex;
   gap: var(--s-3);
-  padding: var(--s-4) var(--s-6);
+  padding: calc(var(--button-offset) * 0.75) var(--button-offset);
   margin-top: auto;
   border-top: none;
   background: transparent;
 }
+
 main.container.themed .card .actions .btn {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
-  padding: var(--s-3) var(--s-5);
-  border-radius: var(--radius-button);
+  padding: calc(var(--button-padding) * 0.7) var(--button-padding);
+  border-radius: var(--button-radius);
   text-decoration: none;
   font-weight: var(--fw-bold);
   font-size: var(--fz-sm);
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   background: var(--c-accent);
-  color: var(--c-buttontext);
-  box-shadow: 0 6px 16px rgba(1,45,85,0.18);
-  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  color: var(--button-text);
+  box-shadow: var(--button-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  font-family: var(--font-button);
 }
+
 main.container.themed .card .actions .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(1,45,85,0.25);
+  box-shadow: var(--button-shadow-hover, var(--button-shadow));
   filter: brightness(1.03);
 }
-main.container.themed .card .actions .btn .ext { display:block; }
 
-/* ========================================================*
+main.container.themed .card .actions .btn .ext {
+  display: block;
+}
+
+main.container.themed[data-card-outline="0"] .card {
+  border-color: transparent !important;
+  border-width: 0 !important;
+}
+
+/* ==========================================================
+   4) MEDIA QUERIES
+   ========================================================== */
+@media (max-width: 1024px) {
+  main.container.themed .themed-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main.container.themed .style-panel {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  main.container.themed {
+    padding: 12px;
+  }
+
+  main.container.themed .style-panel {
+    padding: 16px;
+  }
+}
