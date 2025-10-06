@@ -228,7 +228,7 @@ main.container.themed .card .media .badge {
   top: var(--badge-offset, 12px);
   padding: calc(var(--badge-padding, 10px) * 0.6) var(--badge-padding, 10px);
   border-radius: var(--badge-radius, 4px);
-  background: var(--badge-color, #22c55e);
+  background: var(--badge-color, var(--c-pill, #22c55e));
   color: var(--badge-text, #052e16) !important;
   font-family: var(--font-label, var(--font-body, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial));
 }

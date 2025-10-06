@@ -72,7 +72,7 @@ main.container.themed {
   --badge-offset: 12px;
   --badge-radius: 4px;
   --badge-text: #ffffff;
-  --badge-color: #ff0000;
+  --badge-color: var(--c-pill, #ff0000);
   --button-padding: 14px;
   --button-offset: 16px;
   --button-radius: 40px;
@@ -526,7 +526,7 @@ body.has-menu-open {
   border-radius: var(--badge-radius, 4px);
   font-weight: 700;
   font-size: 12px;
-  background: var(--badge-color, #ff0000);
+  background: var(--badge-color, var(--c-pill, #ff0000));
   color: var(--badge-text, #052e16);
   font-family: var(--font-label, var(--font-body));
   z-index: 0;
