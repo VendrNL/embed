@@ -266,6 +266,7 @@ let FILTERED = [];
 let CURRENT_MEDIA_RATIO = null;
 
 function ensureOverrideStyles() {
+  ensureThemeLinkPriority();
   if (!$mainThemed) return null;
   if (!overrideStyleEl) {
     overrideStyleEl = document.getElementById('themeStyleOverrides') || document.createElement('style');
@@ -282,6 +283,36 @@ function ensureOverrideStyles() {
     parent.appendChild(overrideStyleEl);
   }
   return overrideStyleEl;
+}
+
+function ensureThemeLinkPriority() {
+  if (!$themeLink) {
+    return;
+  }
+
+  const head = document.head || document.getElementsByTagName('head')[0];
+  if (!head) {
+    return;
+  }
+
+  if ($themeLink.parentNode !== head) {
+    head.appendChild($themeLink);
+  }
+
+  const stylesheetLinks = Array.from(head.querySelectorAll('link[rel~="stylesheet"]'));
+  if (!stylesheetLinks.length) {
+    return;
+  }
+
+  const lastLink = stylesheetLinks[stylesheetLinks.length - 1];
+  if (lastLink !== $themeLink) {
+    const currentParent = $themeLink.parentNode;
+    if (currentParent) {
+      currentParent.removeChild($themeLink);
+    }
+    const insertionParent = document.head || head;
+    insertionParent.insertBefore($themeLink, lastLink.nextSibling);
+  }
 }
 
 async function ensureDefaultThemeStylesheet() {
@@ -1131,6 +1162,8 @@ async function swapThemeStylesheet(href) {
     $themeLink.id = 'themeStylesheet';
     document.head.appendChild($themeLink);
   }
+
+  ensureThemeLinkPriority();
 
   const previous = $themeLink.getAttribute('href');
   const absolutePrev = previous ? new URL(previous, location.href).href : null;
