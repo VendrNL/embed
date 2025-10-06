@@ -10,6 +10,7 @@ main.container.themed {
   /* Palet */
   --c-bg:           #f7fafc;  /* kleur achtergrond van de pagina */
   --c-card:         #ffffff;  /* achtergrond van de card */
+  --c-buttontext    #fff      /* tekstkleur van de button */
   --c-border:       #e6edf2;  /* kleur card rand */
   --c-pill:         #ff0000;  /* kleur pill */
   --c-primary:      #161670;  /* kleur van de titel van het project */
@@ -185,7 +186,7 @@ main.container.themed .card .actions .btn {
   font-size: var(--fz-sm);
   letter-spacing: .2px;
   background: var(--c-accent);
-  color: #fff;
+  color: var(--c-buttontext);
   box-shadow: 0 6px 16px rgba(1,45,85,0.18);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
