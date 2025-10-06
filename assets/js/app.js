@@ -518,6 +518,99 @@ const FONT_MAP = {
 
 let COLOR_CANVAS = null;
 
+const IMPORTANT_OVERRIDE_ID = 'stylePanelImportantOverrides';
+const importantOverrides = new Map();
+let importantOverrideStyleEl = null;
+
+function ensureImportantOverrideStylesElement() {
+  if (!document || !document.head) return null;
+  if (!importantOverrideStyleEl) {
+    importantOverrideStyleEl = document.getElementById(IMPORTANT_OVERRIDE_ID) || document.createElement('style');
+    importantOverrideStyleEl.id = IMPORTANT_OVERRIDE_ID;
+  }
+  if (!importantOverrideStyleEl.parentNode) {
+    const parent = (overrideStyleEl && overrideStyleEl.parentNode) || document.head;
+    const reference = overrideStyleEl && overrideStyleEl.nextSibling;
+    if (reference) {
+      parent.insertBefore(importantOverrideStyleEl, reference);
+    } else {
+      parent.appendChild(importantOverrideStyleEl);
+    }
+  }
+  return importantOverrideStyleEl;
+}
+
+function setImportantOverrideValue(selector, prop, value) {
+  const normalizedSelector = (selector || '').trim();
+  const normalizedProp = (prop || '').trim();
+  if (!normalizedSelector || !normalizedProp) {
+    return false;
+  }
+  let propMap = importantOverrides.get(normalizedSelector);
+  if (!propMap) {
+    propMap = new Map();
+    importantOverrides.set(normalizedSelector, propMap);
+  }
+  if (value === null || value === undefined || value === '') {
+    if (propMap.has(normalizedProp)) {
+      propMap.delete(normalizedProp);
+      if (propMap.size === 0) {
+        importantOverrides.delete(normalizedSelector);
+      }
+      return true;
+    }
+    return false;
+  }
+  const normalizedValue = typeof value === 'string' ? value : String(value);
+  if (propMap.get(normalizedProp) === normalizedValue) {
+    return false;
+  }
+  propMap.set(normalizedProp, normalizedValue);
+  return true;
+}
+
+function writeImportantOverrideStyles() {
+  const el = ensureImportantOverrideStylesElement();
+  if (!el) return;
+  let css = '';
+  importantOverrides.forEach((props, selector) => {
+    if (!props || props.size === 0) {
+      return;
+    }
+    const declarations = Array.from(props.entries())
+      .map(([prop, val]) => `  ${prop}: ${val} !important;`)
+      .join('\n');
+    css += `${selector} {\n${declarations}\n}\n`;
+  });
+  el.textContent = css;
+}
+
+function applyImportantOverrides(selectorList, propList, value) {
+  if (value === null || value === undefined) return;
+  const normalizedValue = typeof value === 'string' ? value.trim() : String(value);
+  if (!normalizedValue) return;
+  const selectors = (selectorList || '')
+    .split(',')
+    .map(part => part.trim())
+    .filter(Boolean);
+  const props = (propList || '')
+    .split(/[\s,]+/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  if (!selectors.length || !props.length) return;
+  let changed = false;
+  selectors.forEach(selector => {
+    props.forEach(prop => {
+      if (setImportantOverrideValue(selector, prop, normalizedValue)) {
+        changed = true;
+      }
+    });
+  });
+  if (changed) {
+    writeImportantOverrideStyles();
+  }
+}
+
 function normalizeCssColor(value) {
   if (!value) return null;
   const canvas = COLOR_CANVAS || (COLOR_CANVAS = document.createElement('canvas'));
@@ -590,9 +683,10 @@ function initColorInputs(main, form) {
       props.forEach(prop => {
         if (prop.startsWith('--')) {
           main.style.setProperty(prop, current);
+          document.documentElement.style.setProperty(prop, current);
         }
-        document.documentElement.style.setProperty(prop, current);
       });
+      applyImportantOverrides(input.dataset.styleSelector, input.dataset.styleProp, current);
     }
 
     if (input.dataset.colorInit !== '1') {
@@ -603,9 +697,10 @@ function initColorInputs(main, form) {
         props.forEach(prop => {
           if (prop.startsWith('--')) {
             main.style.setProperty(prop, value);
+            document.documentElement.style.setProperty(prop, value);
           }
-          document.documentElement.style.setProperty(prop, value);
         });
+        applyImportantOverrides(input.dataset.styleSelector, input.dataset.styleProp, value);
       });
     }
   });
@@ -618,6 +713,7 @@ function initRangeInputs(main, form) {
     if (!prop) return;
     const unit = input.dataset.unit || '';
     let current = (computed.getPropertyValue(prop) || '').trim();
+    const isCustomProp = prop.startsWith('--');
 
     if (!current) {
       const selector = input.dataset.sampleSelector;
@@ -643,12 +739,18 @@ function initRangeInputs(main, form) {
       if (!Number.isNaN(numeric)) {
         input.value = String(numeric);
       }
-      main.style.setProperty(prop, current);
-      document.documentElement.style.setProperty(prop, current);
+      if (isCustomProp) {
+        main.style.setProperty(prop, current);
+        document.documentElement.style.setProperty(prop, current);
+      }
+      applyImportantOverrides(input.dataset.styleSelector, input.dataset.styleProp, current);
     } else if (input.value) {
       const valueWithUnit = unit ? input.value + unit : input.value;
-      main.style.setProperty(prop, valueWithUnit);
-      document.documentElement.style.setProperty(prop, valueWithUnit);
+      if (isCustomProp) {
+        main.style.setProperty(prop, valueWithUnit);
+        document.documentElement.style.setProperty(prop, valueWithUnit);
+      }
+      applyImportantOverrides(input.dataset.styleSelector, input.dataset.styleProp, valueWithUnit);
       current = valueWithUnit;
     }
 
@@ -660,8 +762,11 @@ function initRangeInputs(main, form) {
       input.dataset.rangeInit = '1';
       input.addEventListener('input', () => {
         const value = input.value + unit;
-        main.style.setProperty(prop, value);
-        document.documentElement.style.setProperty(prop, value);
+        if (isCustomProp) {
+          main.style.setProperty(prop, value);
+          document.documentElement.style.setProperty(prop, value);
+        }
+        applyImportantOverrides(input.dataset.styleSelector, input.dataset.styleProp, value);
         if (prop === '--media-ratio') {
           applyMediaRatioToCards(value);
         }
@@ -900,6 +1005,7 @@ function initFontSelects(main, form) {
       if (target === 'body') {
         document.body.style.fontFamily = currentValue;
       }
+      applyImportantOverrides(select.dataset.styleSelector, select.dataset.styleProp || 'font-family', currentValue);
     }
 
     if (select.dataset.fontInit !== '1') {
@@ -913,6 +1019,7 @@ function initFontSelects(main, form) {
         if (target === 'body') {
           document.body.style.fontFamily = stack;
         }
+        applyImportantOverrides(select.dataset.styleSelector, select.dataset.styleProp || 'font-family', stack);
       });
     }
   });
