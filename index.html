@@ -149,20 +149,23 @@
                 <span>Afmeting</span>
                 <input type="range" id="styleBadgeSize" min="6" max="28" step="1" value="10"
                        data-css-prop="--badge-padding" data-unit="px"
-                       data-sample-selector=".card .media .badge" data-sample-prop="padding-right" />
+                       data-sample-selector=".card .media .badge" data-sample-prop="padding"
+                       data-style-selector=".card .media .badge" data-style-prop="padding" />
               </label>
 				
 				              <label class="style-panel__field" for="styleBadgeOffset">
                 <span>Afstand</span>
                 <input type="range" id="styleBadgeOffset" min="0" max="64" step="1" value="12"
                        data-css-prop="--badge-offset" data-unit="px"
-                       data-sample-selector=".card .media .badge" data-sample-prop="left" />
+                       data-sample-selector=".card .media .badge" data-sample-prop="left"
+                       data-style-selector=".card .media .badge" data-style-prop="left top" />
               </label>
 				              <label class="style-panel__field" for="styleBadgeRadius">
                 <span>Radius</span>
                 <input type="range" id="styleBadgeRadius" min="0" max="48" step="1" value="4"
                        data-css-prop="--badge-radius" data-unit="px"
-                       data-sample-selector=".card .media .badge" data-sample-prop="border-top-left-radius" />
+                       data-sample-selector=".card .media .badge" data-sample-prop="border-radius"
+                       data-style-selector=".card .media .badge" data-style-prop="border-radius" />
               </label>
 			  <label class="style-panel__field" for="styleBadgeColor">
                 <span>Kleur label</span>
@@ -176,11 +179,13 @@
                 <input type="color" id="styleLabelTextColor" name="styleLabelTextColor"
                        data-css-prop="--badge-text"
                        data-sample-selector=".card .media .badge" data-sample-prop="color"
+                       data-style-selector=".card .media .badge" data-style-prop="color"
                        value="#052e16" />
               </label>
-				              <label class="style-panel__field" for="styleLabelFont">
+                                              <label class="style-panel__field" for="styleLabelFont">
                 <span>Lettertype</span>
-                <select id="styleLabelFont" data-font-target="label" data-font-selector=".card .media .badge">
+                <select id="styleLabelFont" data-font-target="label" data-font-selector=".card .media .badge"
+                        data-style-selector=".card .media .badge" data-style-prop="font-family">
                   <option value="inter">Inter</option>
                   <option value="roboto">Roboto</option>
                   <option value="roboto-slab">Roboto Slab</option>
@@ -208,7 +213,8 @@
                 <span>Radius</span>
                 <input type="range" id="styleButtonRadius" min="0" max="120" step="1" value="40"
                        data-css-prop="--button-radius" data-unit="px"
-                       data-sample-selector=".card .actions .btn" data-sample-prop="border-radius" />
+                       data-sample-selector=".card .actions .btn" data-sample-prop="border-radius"
+                       data-style-selector=".card .actions .btn" data-style-prop="border-radius" />
               </label>
 				              <label class="style-panel__field" for="styleButtonShadow">
                 <span>Schaduw knop</span>
